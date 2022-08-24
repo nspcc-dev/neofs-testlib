@@ -1,0 +1,2 @@
+allure-python-commons==2.9.45
+pexpect==4.8.0
