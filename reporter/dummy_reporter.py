@@ -1,7 +1,7 @@
 from contextlib import AbstractContextManager, contextmanager
 from typing import Any
 
-from .interfaces import Reporter
+from reporter.interfaces import Reporter
 
 
 @contextmanager

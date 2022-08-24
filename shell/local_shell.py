@@ -9,12 +9,15 @@ import pexpect
 from reporter import get_reporter
 from shell.interfaces import CommandOptions, CommandResult, Shell
 
-
 logger = logging.getLogger("neofs.testlib.shell")
 reporter = get_reporter()
 
 
 class LocalShell(Shell):
+    """
+    Implements command shell on a local machine.
+    """
+
     def exec(self, command: str, options: Optional[CommandOptions] = None) -> CommandResult:
         # If no options were provided, use default options
         options = options or CommandOptions()

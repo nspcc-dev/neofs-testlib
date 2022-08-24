@@ -1,2 +1,4 @@
 allure-python-commons==2.9.45
+isort==5.10.1
+paramiko==2.10.3
 pexpect==4.8.0

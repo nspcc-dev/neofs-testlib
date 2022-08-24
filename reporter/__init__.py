@@ -1,8 +1,8 @@
 import os
 
-from .allure_reporter import AllureReporter
-from .interfaces import Reporter
-from .dummy_reporter import DummyReporter
+from reporter.allure_reporter import AllureReporter
+from reporter.dummy_reporter import DummyReporter
+from reporter.interfaces import Reporter
 
 
 def get_reporter() -> Reporter:
