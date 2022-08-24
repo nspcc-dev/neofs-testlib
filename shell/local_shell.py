@@ -9,12 +9,15 @@ import pexpect
 from reporter import get_reporter
 from shell.interfaces import CommandOptions, CommandResult, Shell
 
-
 logger = logging.getLogger("neofs.testlib.shell")
 reporter = get_reporter()
 
 
 class LocalShell(Shell):
+    """
+    Implements command shell on a local machine.
+    """
+
     def exec(self, command: str, options: Optional[CommandOptions] = None) -> CommandResult:
         # If no options were provided, use default options
         options = options or CommandOptions()
@@ -41,12 +44,16 @@ class LocalShell(Shell):
 
             result = self._get_pexpect_process_result(command_process, command)
             if options.check and result.return_code != 0:
-                raise RuntimeError(f"Command: {command}\nreturn code: {result.return_code}\nOutput: {result.stdout}")
+                raise RuntimeError(
+                    f"Command: {command}\nreturn code: {result.return_code}\nOutput: {result.stdout}"
+                )
 
             return result
         except pexpect.ExceptionPexpect as exc:
             result = self._get_pexpect_process_result(command_process, command)
-            message = f"Command: {command}\nreturn code: {result.return_code}\nOutput: {result.stdout}"
+            message = (
+                f"Command: {command}\nreturn code: {result.return_code}\nOutput: {result.stdout}"
+            )
             if options.check:
                 raise RuntimeError(message) from exc
             else:
@@ -54,7 +61,9 @@ class LocalShell(Shell):
                 return result
         except OSError as exc:
             result = self._get_pexpect_process_result(command_process, command)
-            message = f"Command: {command}\nreturn code: {result.return_code}\nOutput: {exc.strerror}"
+            message = (
+                f"Command: {command}\nreturn code: {result.return_code}\nOutput: {exc.strerror}"
+            )
             if options.check:
                 raise RuntimeError(message) from exc
             else:
@@ -80,7 +89,7 @@ class LocalShell(Shell):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 timeout=options.timeout,
-                shell=True
+                shell=True,
             )
 
             result = CommandResult(
@@ -92,9 +101,11 @@ class LocalShell(Shell):
         except subprocess.CalledProcessError as exc:
             # TODO: always set check flag to false and capture command result normally
             result = self._get_failing_command_result(command)
-            raise RuntimeError(f"Command: {command}\nError:\n"
-                               f"return code: {exc.returncode}\n"
-                               f"output: {exc.output}") from exc
+            raise RuntimeError(
+                f"Command: {command}\nError:\n"
+                f"return code: {exc.returncode}\n"
+                f"output: {exc.output}"
+            ) from exc
         except OSError as exc:
             raise RuntimeError(f"Command: {command}\nOutput: {exc.strerror}") from exc
         except Exception as exc:
@@ -106,14 +117,11 @@ class LocalShell(Shell):
 
     def _get_failing_command_result(self, command: str) -> CommandResult:
         return_code, cmd_output = subprocess.getstatusoutput(command)
-        return CommandResult(
-            stdout=cmd_output,
-            stderr="",
-            return_code=return_code
-        )
+        return CommandResult(stdout=cmd_output, stderr="", return_code=return_code)
 
-    def _get_pexpect_process_result(self, command_process: Optional[pexpect.spawn],
-                                    command: str) -> CommandResult:
+    def _get_pexpect_process_result(
+        self, command_process: Optional[pexpect.spawn], command: str
+    ) -> CommandResult:
         """
         If command process is not None, captures output of this process.
         If command process is None, then command fails when we attempt to start it, in this case
@@ -137,14 +145,20 @@ class LocalShell(Shell):
 
         return CommandResult(stdout=output, stderr="", return_code=return_code)
 
-    def _report_command_result(self, command: str, start_time: datetime, end_time: datetime,
-                               result: Optional[CommandResult]) -> None:
+    def _report_command_result(
+        self,
+        command: str,
+        start_time: datetime,
+        end_time: datetime,
+        result: Optional[CommandResult],
+    ) -> None:
         # TODO: increase logging level if return code is non 0, should be warning at least
         logger.info(
             f"Command: {command}\n"
             f"{'Success:' if result and result.return_code == 0 else 'Error:'}\n"
             f"return code: {result.return_code if result else ''} "
-            f"\nOutput: {result.stdout if result else ''}")
+            f"\nOutput: {result.stdout if result else ''}"
+        )
 
         if result:
             elapsed_time = end_time - start_time

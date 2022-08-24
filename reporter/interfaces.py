@@ -16,14 +16,13 @@ class Reporter(ABC):
         :param str name: Name of the step
         :return: step context
         """
-        pass
 
     @abstractmethod
     def attach(self, content: Any, file_name: str) -> None:
         """
         Attach specified content with given file name to the test report.
 
-        :param any name: content to attach. If not a string, it will be converted to a string.
+        :param any content: content to attach. If content value is not a string, it will be
+        converted to a string.
         :param str file_name: file name of attachment.
         """
-        pass

@@ -6,7 +6,7 @@ from typing import Any
 import allure
 from allure import attachment_type
 
-from .interfaces import Reporter
+from reporter.interfaces import Reporter
 
 
 class AllureReporter(Reporter):
