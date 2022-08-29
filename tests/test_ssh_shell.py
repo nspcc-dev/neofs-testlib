@@ -132,7 +132,7 @@ class TestSSHShellNonInteractive(TestCase):
 
     def test_non_existing_binary(self):
         with self.assertRaises(RuntimeError) as exc:
-            self.shell.exec(f"not-a-command")
+            self.shell.exec("not-a-command")
 
         error = format_error_details(exc.exception)
         self.assertIn("Error", error)

@@ -56,4 +56,3 @@ class Shell(ABC):
         :param CommandOptions options: options that control command execution.
         :return command result.
         """
-        pass

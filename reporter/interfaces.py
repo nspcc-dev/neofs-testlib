@@ -16,7 +16,6 @@ class Reporter(ABC):
         :param str name: Name of the step
         :return: step context
         """
-        pass
 
     @abstractmethod
     def attach(self, content: Any, file_name: str) -> None:
@@ -27,4 +26,3 @@ class Reporter(ABC):
         converted to a string.
         :param str file_name: file name of attachment.
         """
-        pass
