@@ -2,11 +2,20 @@ import logging
 import socket
 import textwrap
 from datetime import datetime
-from functools import wraps
+from functools import lru_cache, wraps
 from time import sleep
 from typing import ClassVar, Optional
 
-from paramiko import AutoAddPolicy, RSAKey, SSHClient, SSHException, ssh_exception
+from paramiko import (
+    AutoAddPolicy,
+    ECDSAKey,
+    Ed25519Key,
+    PKey,
+    RSAKey,
+    SSHClient,
+    SSHException,
+    ssh_exception,
+)
 from paramiko.ssh_exception import AuthenticationException
 
 from reporter import get_reporter
@@ -46,9 +55,29 @@ def log_command(func):
             )
 
             logger.info(log_message)
-            reporter.attach(log_message, 'SSH command.txt')
+            reporter.attach(log_message, "SSH command.txt")
         return result
+
     return wrapper
+
+
+@lru_cache
+def _load_private_key(file_path: str, password: Optional[str]) -> PKey:
+    """
+    Loads private key from specified file.
+
+    We support several type formats, however paramiko doesn't provide functionality to determine
+    key type in advance. So we attempt to load file with each of the supported formats and then
+    cache the result so that we don't need to figure out type again on subsequent calls.
+    """
+    logger.debug(f"Loading ssh key from {file_path}")
+    for key_type in (Ed25519Key, ECDSAKey, RSAKey):
+        try:
+            return key_type.from_private_key_file(file_path, password)
+        except SSHException as ex:
+            logger.warn(f"SSH key {file_path} can't be loaded with {key_type}: {ex}")
+            continue
+    raise SSHException(f"SSH key {file_path} is not supported")
 
 
 class SSHShell(Shell):
@@ -63,9 +92,15 @@ class SSHShell(Shell):
     SSH_CONNECTION_ATTEMPTS: ClassVar[int] = 3
     CONNECTION_TIMEOUT = 90
 
-    def __init__(self, host: str, login: str, password: Optional[str] = None,
-                 private_key_path: Optional[str] = None,
-                 private_key_passphrase: Optional[str] = None, port: str = "22") -> None:
+    def __init__(
+        self,
+        host: str,
+        login: str,
+        password: Optional[str] = None,
+        private_key_path: Optional[str] = None,
+        private_key_passphrase: Optional[str] = None,
+        port: str = "22",
+    ) -> None:
         self.host = host
         self.port = port
         self.login = login
@@ -163,8 +198,8 @@ class SSHShell(Shell):
                         hostname=self.host,
                         port=self.port,
                         username=self.login,
-                        pkey=RSAKey.from_private_key_file(self.private_key_path, self.private_key_passphrase),
-                        timeout=self.CONNECTION_TIMEOUT
+                        pkey=_load_private_key(self.private_key_path, self.private_key_passphrase),
+                        timeout=self.CONNECTION_TIMEOUT,
                     )
                 else:
                     logging.info(
@@ -176,7 +211,7 @@ class SSHShell(Shell):
                         port=self.port,
                         username=self.login,
                         password=self.password,
-                        timeout=self.CONNECTION_TIMEOUT
+                        timeout=self.CONNECTION_TIMEOUT,
                     )
                 return connection
             except AuthenticationException:

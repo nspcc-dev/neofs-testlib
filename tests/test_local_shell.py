@@ -15,8 +15,7 @@ class TestLocalShellInteractive(TestCase):
 
         inputs = [InteractiveInput(prompt_pattern="Password", input="test")]
         result = self.shell.exec(
-            f"python3 -c \"{script}\"",
-            CommandOptions(interactive_inputs=inputs)
+            f'python3 -c "{script}"', CommandOptions(interactive_inputs=inputs)
         )
 
         self.assertEqual(0, result.return_code)
@@ -34,14 +33,12 @@ class TestLocalShellInteractive(TestCase):
         ]
 
         result = self.shell.exec(
-            f"python3 -c \"{script}\"",
-            CommandOptions(interactive_inputs=inputs)
+            f'python3 -c "{script}"', CommandOptions(interactive_inputs=inputs)
         )
 
         self.assertEqual(0, result.return_code)
         self.assertEqual(
-            ["Input1: test1", "test1", "Input2: test2", "test2"],
-            get_output_lines(result)
+            ["Input1: test1", "test1", "Input2: test2", "test2"], get_output_lines(result)
         )
         self.assertEqual("", result.stderr)
 
@@ -50,7 +47,7 @@ class TestLocalShellInteractive(TestCase):
         inputs = [InteractiveInput(prompt_pattern=".*", input="test")]
 
         with self.assertRaises(RuntimeError) as exc:
-            self.shell.exec(f"python3 -c \"{script}\"", CommandOptions(interactive_inputs=inputs))
+            self.shell.exec(f'python3 -c "{script}"', CommandOptions(interactive_inputs=inputs))
 
         error = format_error_details(exc.exception)
         self.assertIn("Error", error)
@@ -62,7 +59,7 @@ class TestLocalShellInteractive(TestCase):
         inputs = [InteractiveInput(prompt_pattern=".*", input="test")]
 
         result = self.shell.exec(
-            f"python3 -c \"{script}\"",
+            f'python3 -c "{script}"',
             CommandOptions(interactive_inputs=inputs, check=False),
         )
         self.assertEqual(1, result.return_code)
@@ -85,7 +82,7 @@ class TestLocalShellNonInteractive(TestCase):
     def test_successful_command(self):
         script = "print('test')"
 
-        result = self.shell.exec(f"python3 -c \"{script}\"")
+        result = self.shell.exec(f'python3 -c "{script}"')
 
         self.assertEqual(0, result.return_code)
         self.assertEqual("test", result.stdout.strip())
@@ -95,7 +92,7 @@ class TestLocalShellNonInteractive(TestCase):
         script = "invalid script"
 
         with self.assertRaises(RuntimeError) as exc:
-            self.shell.exec(f"python3 -c \"{script}\"")
+            self.shell.exec(f'python3 -c "{script}"')
 
         error = format_error_details(exc.exception)
         self.assertIn("Error", error)
@@ -104,7 +101,7 @@ class TestLocalShellNonInteractive(TestCase):
     def test_invalid_command_without_check(self):
         script = "invalid script"
 
-        result = self.shell.exec(f"python3 -c \"{script}\"", CommandOptions(check=False))
+        result = self.shell.exec(f'python3 -c "{script}"', CommandOptions(check=False))
 
         self.assertEqual(1, result.return_code)
         self.assertIn("Error", result.stdout)

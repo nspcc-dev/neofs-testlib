@@ -11,6 +11,7 @@ class InteractiveInput:
     :attr str prompt_pattern: regular expression that defines expected prompt from the command.
     :attr str input: user input that should be supplied to the command in response to the prompt.
     """
+
     prompt_pattern: str
     input: str
 
@@ -26,6 +27,7 @@ class CommandOptions:
     :attr bool check: controls whether to check return code of the command. Set to False to
           ignore non-zero return codes.
     """
+
     interactive_inputs: Optional[list[InteractiveInput]] = None
     timeout: int = 30
     check: bool = True
@@ -36,6 +38,7 @@ class CommandResult:
     """
     Represents a result of a command executed via shell.
     """
+
     stdout: str
     stderr: str
     return_code: int

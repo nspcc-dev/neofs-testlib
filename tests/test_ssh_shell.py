@@ -26,6 +26,7 @@ def init_shell() -> SSHShell:
         private_key_passphrase=private_key_passphrase,
     )
 
+
 class TestSSHShellInteractive(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -36,8 +37,7 @@ class TestSSHShellInteractive(TestCase):
 
         inputs = [InteractiveInput(prompt_pattern="Password", input="test")]
         result = self.shell.exec(
-            f"python3 -c \"{script}\"",
-            CommandOptions(interactive_inputs=inputs)
+            f'python3 -c "{script}"', CommandOptions(interactive_inputs=inputs)
         )
 
         # TODO: we have inconsistency with local shell here, ssh does not echo input into stdout
@@ -56,8 +56,7 @@ class TestSSHShellInteractive(TestCase):
         ]
 
         result = self.shell.exec(
-            f"python3 -c \"{script}\"",
-            CommandOptions(interactive_inputs=inputs)
+            f'python3 -c "{script}"', CommandOptions(interactive_inputs=inputs)
         )
 
         # TODO: we have inconsistency with local shell here, ssh does not echo input into stdout
@@ -70,7 +69,7 @@ class TestSSHShellInteractive(TestCase):
         inputs = [InteractiveInput(prompt_pattern=".*", input="test")]
 
         with self.assertRaises(RuntimeError) as raised:
-            self.shell.exec(f"python3 -c \"{script}\"", CommandOptions(interactive_inputs=inputs))
+            self.shell.exec(f'python3 -c "{script}"', CommandOptions(interactive_inputs=inputs))
 
         error = format_error_details(raised.exception)
         self.assertIn("Error", error)
@@ -81,7 +80,7 @@ class TestSSHShellInteractive(TestCase):
         inputs = [InteractiveInput(prompt_pattern=".*", input="test")]
 
         result = self.shell.exec(
-            f"python3 -c \"{script}\"",
+            f'python3 -c "{script}"',
             CommandOptions(interactive_inputs=inputs, check=False),
         )
         self.assertEqual(1, result.return_code)
@@ -104,7 +103,7 @@ class TestSSHShellNonInteractive(TestCase):
     def test_correct_command(self):
         script = "print('test')"
 
-        result = self.shell.exec(f"python3 -c \"{script}\"")
+        result = self.shell.exec(f'python3 -c "{script}"')
 
         self.assertEqual(0, result.return_code)
         self.assertEqual("test", result.stdout.strip())
@@ -114,7 +113,7 @@ class TestSSHShellNonInteractive(TestCase):
         script = "invalid script"
 
         with self.assertRaises(RuntimeError) as raised:
-            self.shell.exec(f"python3 -c \"{script}\"")
+            self.shell.exec(f'python3 -c "{script}"')
 
         error = format_error_details(raised.exception)
         self.assertIn("Error", error)
@@ -123,7 +122,7 @@ class TestSSHShellNonInteractive(TestCase):
     def test_invalid_command_without_check(self):
         script = "invalid script"
 
-        result = self.shell.exec(f"python3 -c \"{script}\"", CommandOptions(check=False))
+        result = self.shell.exec(f'python3 -c "{script}"', CommandOptions(check=False))
 
         self.assertEqual(1, result.return_code)
         # TODO: we have inconsistency with local shell here, the local shell captures error info
