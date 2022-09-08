@@ -22,7 +22,7 @@ class CommandOptions:
     Options that control command execution.
 
     :attr list interactive_inputs: user inputs that should be interactively supplied to
-          the command during its' execution.
+          the command during execution.
     :attr int timeout: timeout for command execution (in seconds).
     :attr bool check: controls whether to check return code of the command. Set to False to
           ignore non-zero return codes.

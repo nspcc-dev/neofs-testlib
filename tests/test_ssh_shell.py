@@ -15,7 +15,7 @@ def init_shell() -> SSHShell:
 
     if not all([host, login, private_key_path, private_key_passphrase]):
         # TODO: in the future we might use https://pypi.org/project/mock-ssh-server,
-        # at the moment it is not suitable for us because of its' issues with stdin
+        # at the moment it is not suitable for us because of its issues with stdin
         raise SkipTest("SSH connection is not configured")
 
     return SSHShell(

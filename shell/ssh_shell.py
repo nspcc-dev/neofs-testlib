@@ -86,7 +86,7 @@ class SSHShell(Shell):
     """
 
     # Time in seconds to delay after remote command has completed. The delay is required
-    # to allow remote command to flush its' output buffer
+    # to allow remote command to flush its output buffer
     DELAY_AFTER_EXIT = 0.2
 
     SSH_CONNECTION_ATTEMPTS: ClassVar[int] = 3
@@ -146,7 +146,7 @@ class SSHShell(Shell):
                 logger.exception(f"Error while feeding {input} into command {command}")
         # stdin.close()
 
-        # Wait for command to complete and flush its' buffer before we attempt to read output
+        # Wait for command to complete and flush its buffer before we attempt to read output
         sleep(self.DELAY_AFTER_EXIT)
         return_code = stdout.channel.recv_exit_status()
         sleep(self.DELAY_AFTER_EXIT)
@@ -163,7 +163,7 @@ class SSHShell(Shell):
         try:
             _, stdout, stderr = self._connection.exec_command(command, timeout=options.timeout)
 
-            # Wait for command to complete and flush its' buffer before we attempt to read output
+            # Wait for command to complete and flush its buffer before we attempt to read output
             return_code = stdout.channel.recv_exit_status()
             sleep(self.DELAY_AFTER_EXIT)
 
