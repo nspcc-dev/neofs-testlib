@@ -48,3 +48,34 @@ SSH_SHELL_LOGIN = <login that has permissions to run python3 on the server>
 SSH_SHELL_PRIVATE_KEY_PATH = <path to SSH private key on your machine>
 SSH_SHELL_PRIVATE_KEY_PASSPHRASE = <passphrase for the SSH private key>
 ```
+
+### Editable installation
+If you would like to modify code of the library in the integration with your test suite, you can use editable installation. For that, in virtual environment of your test suite (not in the virtual environment of the testlib itself!) run the following command (path to `neofs-testlib` directory might be different on your machine):
+```shell
+$ pip install -e ../neofs-testlib
+```
+
+### Building and publishing package
+To build Python package of the library, please run the following command in the library root directory:
+```shell
+$ python -m build
+```
+
+This command will put wheel file and source archive under `dist` directory.
+
+To check that package description will be correctly rendered at PyPI, please, use command:
+```shell
+$ twine check dist/*
+```
+
+To upload package to [test PyPI](https://test.pypi.org/project/neofs-testlib/), please, use command:
+```shell
+$ twine upload -r testpypi dist/*
+```
+It will prompt for your username and password. You would need to [create test PyPI account](https://test.pypi.org/account/register/) in order to execute it.
+
+To upload package to actual PyPI, please, use command:
+```shell
+$ twine upload dist/*
+```
+It will prompt for your username and password. You would need to [create account](https://pypi.org/account/register/) in order to execute it.
