@@ -1,6 +1,6 @@
 import traceback
 
-from shell.interfaces import CommandResult
+from neofs_testlib.shell.interfaces import CommandResult
 
 
 def format_error_details(error: Exception) -> str:

@@ -1,7 +1,8 @@
 from unittest import TestCase
 
-from shell.interfaces import CommandOptions, InteractiveInput
-from shell.local_shell import LocalShell
+from neofs_testlib.shell.interfaces import CommandOptions, InteractiveInput
+from neofs_testlib.shell.local_shell import LocalShell
+
 from tests.helpers import format_error_details, get_output_lines
 
 

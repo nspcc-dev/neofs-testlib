@@ -1,1 +1,0 @@
-from .authmate import NeofsAuthmate
