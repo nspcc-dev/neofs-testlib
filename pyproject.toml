@@ -1,8 +1,50 @@
+[build-system]
+requires      = ["setuptools>=63.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neofs-testlib"
+version = "0.1.0"
+description = "Building blocks and utilities to facilitate development of automated tests for NeoFS system"
+readme = "README.md"
+authors = [{ name = "NSPCC", email = "info@nspcc.ru" }]
+license = { text = "GNU General Public License v3 (GPLv3)" }
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["neofs", "test"]
+dependencies = [
+    "allure-python-commons>=2.9.45",
+    "paramiko>=2.10.3",
+    "pexpect>=4.8.0",
+]
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+dev = ["black", "bumpver", "isort", "pre-commit"]
+
+[project.urls]
+Homepage = "https://github.com/nspcc-dev/neofs-testlib"
+
 [tool.isort]
 profile = "black"
-src_paths = ["reporter", "shell", "tests"]
+src_paths = ["src", "tests"]
 line_length = 100
 
 [tool.black]
 line-length = 100
 target-version = ["py39"]
+
+[tool.bumpver]
+current_version = "0.1.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message  = "Bump version {old_version} -> {new_version}"
+commit          = false
+tag             = false
+push            = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
+"src/neofs_testlib/__init__.py" = ["{version}"]

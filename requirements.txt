@@ -1,6 +1,14 @@
 allure-python-commons==2.9.45
-black==22.8.0
-isort==5.10.1
 paramiko==2.10.3
 pexpect==4.8.0
+
+# Dev dependencies
+black==22.8.0
+bumpver==2022.1118
+isort==5.10.1
 pre-commit==2.20.0
+
+# Packaging dependencies
+build==0.8.0
+setuptools==63.2.0
+twine==4.0.1

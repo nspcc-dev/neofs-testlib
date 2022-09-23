@@ -1,11 +1,17 @@
 # neofs-testlib
 This library provides building blocks and utilities to facilitate development of automated tests for NeoFS system.
 
-## Repository structure
-TODO
-
 ## Installation
-TODO
+Library can be installed via pip:
+```shell
+$ pip install neofs-testlib
+```
+
+## Library structure
+The library provides the following primary components:
+ * `cli` - wrappers on top of neoFS command-line tools. These wrappers execute on a shell and provide type-safe interface for interacting with the tools.
+ * `reporter` - abstraction on top of test reporting tool like Allure. Components of the library will report their steps and attach artifacts to the configured reporter instance.
+ * `shell` - shells that can be used to execute commands. Currently library provides local shell (on machine that runs the code) or SSH shell that connects to a remote machine via SSH.
 
 ## Contributing
 Any contributions to the library should conform to the [contribution guideline](https://github.com/nspcc-dev/neofs-node/blob/master/CONTRIBUTING.md).
@@ -14,21 +20,21 @@ Any contributions to the library should conform to the [contribution guideline](
 To setup development environment for `neofs-testlib`, please, take the following steps:
 1. Prepare virtualenv
 
-```
+```shell
 $ virtualenv --python=python3.9 venv
 $ source venv/bin/activate
 ```
 
 2. Install all dependencies:
 
-```
+```shell
 $ pip install -r requirements.txt
 ```
 
 3. Setup pre-commit hooks to run code formatters on staged files before you run a `git commit` command:
 
-```
-pre-commit install
+```shell
+$ pre-commit install
 ```
 
 Optionally you might want to integrate code formatters with your code editor to apply formatters to code files as you go:
@@ -37,8 +43,8 @@ Optionally you might want to integrate code formatters with your code editor to 
 
 ### Unit Tests
 Before submitting any changes to the library, please, make sure that all unit tests are passing. To run the tests, please, use the following command:
-```
-python -m unittest discover --start-directory tests
+```shell
+$ python -m unittest discover --start-directory tests
 ```
 
 To enable tests that interact with SSH server, please, setup SSH server and set the following environment variables before running the tests:
@@ -78,4 +84,4 @@ To upload package to actual PyPI, please, use command:
 ```shell
 $ twine upload dist/*
 ```
-It will prompt for your username and password. You would need to [create account](https://pypi.org/account/register/) in order to execute it.
+It will prompt for your username and password. You would need to [create PyPI account](https://pypi.org/account/register/) in order to execute it.
