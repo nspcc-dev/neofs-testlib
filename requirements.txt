@@ -1,6 +1,8 @@
 allure-python-commons==2.9.45
+importlib_metadata==5.0.0
 paramiko==2.10.3
 pexpect==4.8.0
+pyyaml==6.0
 
 # Dev dependencies
 black==22.8.0
@@ -10,5 +12,5 @@ pre-commit==2.20.0
 
 # Packaging dependencies
 build==0.8.0
-setuptools==63.2.0
+setuptools==65.3.0
 twine==4.0.1
