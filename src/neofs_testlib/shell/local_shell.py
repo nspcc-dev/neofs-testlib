@@ -7,7 +7,7 @@ from typing import IO, Optional
 import pexpect
 
 from neofs_testlib.reporter import get_reporter
-from neofs_testlib.shell.interfaces import CommandOptions, CommandResult, Shell
+from neofs_testlib.shell.interfaces import CommandInspector, CommandOptions, CommandResult, Shell
 
 logger = logging.getLogger("neofs.testlib.shell")
 reporter = get_reporter()
@@ -16,9 +16,16 @@ reporter = get_reporter()
 class LocalShell(Shell):
     """Implements command shell on a local machine."""
 
+    def __init__(self, command_inspectors: Optional[list[CommandInspector]] = None) -> None:
+        super().__init__()
+        self.command_inspectors = command_inspectors or []
+
     def exec(self, command: str, options: Optional[CommandOptions] = None) -> CommandResult:
         # If no options were provided, use default options
         options = options or CommandOptions()
+
+        for inspector in self.command_inspectors:
+            command = inspector.inspect(command)
 
         logger.info(f"Executing command: {command}")
         if options.interactive_inputs:

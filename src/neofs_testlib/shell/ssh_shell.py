@@ -19,7 +19,7 @@ from paramiko import (
 from paramiko.ssh_exception import AuthenticationException
 
 from neofs_testlib.reporter import get_reporter
-from neofs_testlib.shell.interfaces import CommandOptions, CommandResult, Shell
+from neofs_testlib.shell.interfaces import CommandInspector, CommandOptions, CommandResult, Shell
 
 logger = logging.getLogger("neofs.testlib.shell")
 reporter = get_reporter()
@@ -97,13 +97,16 @@ class SSHShell(Shell):
         private_key_path: Optional[str] = None,
         private_key_passphrase: Optional[str] = None,
         port: str = "22",
+        command_inspectors: Optional[list[CommandInspector]] = None,
     ) -> None:
+        super().__init__()
         self.host = host
         self.port = port
         self.login = login
         self.password = password
         self.private_key_path = private_key_path
         self.private_key_passphrase = private_key_passphrase
+        self.command_inspectors = command_inspectors or []
         self.__connection: Optional[SSHClient] = None
 
     @property
@@ -118,6 +121,9 @@ class SSHShell(Shell):
     def exec(self, command: str, options: Optional[CommandOptions] = None) -> CommandResult:
         options = options or CommandOptions()
 
+        for inspector in self.command_inspectors:
+            command = inspector.inspect(command)
+
         if options.interactive_inputs:
             result = self._exec_interactive(command, options)
         else:
@@ -125,8 +131,7 @@ class SSHShell(Shell):
 
         if options.check and result.return_code != 0:
             raise RuntimeError(
-                f"Command: {command}\nreturn code: {result.return_code}"
-                f"\nOutput: {result.stdout}"
+                f"Command: {command}\nreturn code: {result.return_code}\nOutput: {result.stdout}"
             )
         return result
 
@@ -141,7 +146,8 @@ class SSHShell(Shell):
                 stdin.write(input)
             except OSError:
                 logger.exception(f"Error while feeding {input} into command {command}")
-        # stdin.close()
+        if options.close_stdin:
+            stdin.close()
 
         # Wait for command to complete and flush its buffer before we attempt to read output
         sleep(self.DELAY_AFTER_EXIT)
@@ -158,7 +164,10 @@ class SSHShell(Shell):
     @log_command
     def _exec_non_interactive(self, command: str, options: CommandOptions) -> CommandResult:
         try:
-            _, stdout, stderr = self._connection.exec_command(command, timeout=options.timeout)
+            stdin, stdout, stderr = self._connection.exec_command(command, timeout=options.timeout)
+
+            if options.close_stdin:
+                stdin.close()
 
             # Wait for command to complete and flush its buffer before we attempt to read output
             return_code = stdout.channel.recv_exit_status()

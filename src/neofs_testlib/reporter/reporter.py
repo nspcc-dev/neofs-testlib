@@ -34,7 +34,7 @@ class Reporter:
         All existing handlers will be removed from the reporter.
 
         Args:
-            config: dictionary with reporter configuration.
+            config: Dictionary with reporter configuration.
         """
         # Reset current configuration
         self.handlers = []

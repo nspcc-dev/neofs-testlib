@@ -29,6 +29,16 @@ Alternative approach for registering handlers is to use method `configure`. It i
 get_reporter().configure({ "handlers": [{"plugin_name": "allure"}] })
 ```
 
+### Hosting Configuration
+Hosting component is a class that represents infrastructure (machines/containers/services) where neoFS is hosted. Interaction with specific infrastructure instance (host) is encapsulated in classes that implement interface `neofs_testlib.hosting.Host`. To pass information about hosts to the `Hosting` class in runtime we use method `configure`:
+
+```python
+from neofs_testlib.hosting import Hosting
+
+hosting = Hosting()
+hosting.configure({ "hosts": [{ "address": "localhost", "plugin_name": "docker" ... }]})
+```
+
 ## Plugins
 Testlib uses [entrypoint specification](https://docs.python.org/3/library/importlib.metadata.html) for plugins. Testlib supports the following entrypoint groups for plugins:
  - `neofs.testlib.reporter` - group for reporter handler plugins. Plugin should be a class that implements interface `neofs_testlib.reporter.interfaces.ReporterHandler`.
@@ -74,6 +84,7 @@ Detailed information about registering entrypoints can be found at [setuptools d
 ## Library structure
 The library provides the following primary components:
  * `cli` - wrappers on top of neoFS command-line tools. These wrappers execute on a shell and provide type-safe interface for interacting with the tools.
+ * `hosting` - management of infrastructure (docker, virtual machines, services where neoFS is hosted). The library provides host implementation for docker environment (when neoFS services are running as docker containers). Support for other hosts is provided via plugins.
  * `reporter` - abstraction on top of test reporting tool like Allure. Components of the library will report their steps and attach artifacts to the configured reporter instance.
  * `shell` - shells that can be used to execute commands. Currently library provides local shell (on machine that runs the code) or SSH shell that connects to a remote machine via SSH.
 
