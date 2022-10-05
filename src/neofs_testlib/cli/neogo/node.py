@@ -5,13 +5,12 @@ from neofs_testlib.shell import CommandResult
 
 class NeoGoNode(CliCommand):
     def start(self, network: NetworkType = NetworkType.PRIVATE) -> CommandResult:
-        """Start a NEO node
+        """Start a NEO node.
 
         Args:
-            network (NetworkType): Select network type (default: private)
+            network: Select network type (default: private).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute("start", **{network.value: True})

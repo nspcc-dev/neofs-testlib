@@ -14,19 +14,17 @@ class NeoGoDb(CliCommand):
         count: int = 0,
         start: int = 0,
     ) -> CommandResult:
-        """Dump blocks (starting with block #1) to the file
+        """Dump blocks (starting with block #1) to the file.
 
         Args:
-            config_path (str):     path to config
-            network (NetworkType): Select network type (default: private)
-            count (int):           number of blocks to be processed (default or 0: all chain)
-                                   (default: 0)
-            start (int):           block number to start from (default: 0) (default: 0)
-            out (srt):             Output file (stdout if not given)
+            config_path: Path to config.
+            network: Select network type (default: private).
+            count: Number of blocks to be processed (default or 0: all chain) (default: 0).
+            start: Block number to start from (default: 0) (default: 0).
+            out: Output file (stdout if not given).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "db dump",
@@ -47,20 +45,18 @@ class NeoGoDb(CliCommand):
         dump: Optional[str] = None,
         incremental: bool = False,
     ) -> CommandResult:
-        """Dump blocks (starting with block #1) to the file
+        """Dump blocks (starting with block #1) to the file.
 
         Args:
-            config_path (str):     path to config
-            network (NetworkType): Select network type (default: private)
-            count (int):           number of blocks to be processed (default or 0: all chain)
-                                   (default: 0)
-            input_file (str):      Input file (stdin if not given)
-            dump (str):            directory for storing JSON dumps
-            incremental (bool):    use if dump is incremental
+            config_path: Path to config.
+            network: Select network type (default: private).
+            count: Number of blocks to be processed (default or 0: all chain) (default: 0).
+            input_file: Input file (stdin if not given).
+            dump: Directory for storing JSON dumps.
+            incremental: Use if dump is incremental.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "db restore",

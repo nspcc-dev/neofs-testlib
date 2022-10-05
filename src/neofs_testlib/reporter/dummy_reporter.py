@@ -10,9 +10,7 @@ def _dummy_step():
 
 
 class DummyReporter(Reporter):
-    """
-    Dummy implementation of reporter, does not store artifacts anywhere.
-    """
+    """Dummy implementation of reporter, does not store artifacts anywhere."""
 
     def step(self, name: str) -> AbstractContextManager:
         return _dummy_step()

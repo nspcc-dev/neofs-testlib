@@ -13,20 +13,18 @@ class NeoGoWallet(CliCommand):
         wallet_config: Optional[str] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """claim GAS
+        """Claim GAS.
 
         Args:
-            address (str):       Address to claim GAS for
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            address: Address to claim GAS for.
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -45,18 +43,16 @@ class NeoGoWallet(CliCommand):
         wallet_config: Optional[str] = None,
         account: bool = False,
     ) -> CommandResult:
-        """create a new wallet
+        """Create a new wallet.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            account (bool):      Create a new account
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            account: Create a new account.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -75,18 +71,16 @@ class NeoGoWallet(CliCommand):
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
     ) -> CommandResult:
-        """convert addresses from existing NEO2 NEP6-wallet to NEO3 format
+        """Convert addresses from existing NEO2 NEP6-wallet to NEO3 format.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            out (str):           where to write converted wallet
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            out: Where to write converted wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -104,17 +98,15 @@ class NeoGoWallet(CliCommand):
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
     ) -> CommandResult:
-        """add an account to the existing wallet
+        """Add an account to the existing wallet.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -133,18 +125,16 @@ class NeoGoWallet(CliCommand):
         wallet_config: Optional[str] = None,
         decrypt: bool = False,
     ) -> CommandResult:
-        """check and dump an existing NEO wallet
+        """Check and dump an existing NEO wallet.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            decrypt (bool):      Decrypt encrypted keys.
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            decrypt: Decrypt encrypted keys.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -163,18 +153,16 @@ class NeoGoWallet(CliCommand):
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
     ) -> CommandResult:
-        """check and dump an existing NEO wallet
+        """Check and dump an existing NEO wallet.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            address (str):       address to print public keys for
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            address: Address to print public keys for.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -193,18 +181,16 @@ class NeoGoWallet(CliCommand):
         wallet_config: Optional[str] = None,
         decrypt: bool = False,
     ) -> CommandResult:
-        """export keys for address
+        """Export keys for address.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            decrypt (bool):      Decrypt encrypted keys.
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            decrypt: Decrypt encrypted keys.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -225,20 +211,18 @@ class NeoGoWallet(CliCommand):
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
     ) -> CommandResult:
-        """import WIF of a standard signature contract
+        """Import WIF of a standard signature contract.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            wif (str):           WIF to import
-            name (str):          Optional account name
-            contract (str):      Verification script for custom contracts
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            wif: WIF to import.
+            name: Optional account name.
+            contract: Verification script for custom contracts.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -259,20 +243,18 @@ class NeoGoWallet(CliCommand):
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
     ) -> CommandResult:
-        """import multisig contract
+        """Import multisig contract.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            wif (str):           WIF to import
-            name (str):          Optional account name
-            min_number (int):    Minimal number of signatures (default: 0)
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            wif: WIF to import.
+            name: Optional account name.
+            min_number: Minimal number of signatures (default: 0).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -295,22 +277,20 @@ class NeoGoWallet(CliCommand):
         contract: Optional[str] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """import multisig contract
+        """Import deployed contract.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            wif (str):           WIF to import
-            name (str):          Optional account name
-            contract (str):      Contract hash or address
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            wif: WIF to import.
+            name: Optional account name.
+            contract: Contract hash or address.
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -330,19 +310,17 @@ class NeoGoWallet(CliCommand):
         wallet_config: Optional[str] = None,
         force: bool = False,
     ) -> CommandResult:
-        """check and dump an existing NEO wallet
+        """Remove an account from the wallet.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            address (str):       Account address or hash in LE form to be removed
-            force (bool):        Do not ask for a confirmation
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            address: Account address or hash in LE form to be removed.
+            force: Do not ask for a confirmation.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -365,22 +343,27 @@ class NeoGoWallet(CliCommand):
         out: Optional[str] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """import multisig contract
+        """Cosign transaction with multisig/contract/additional account.
+
+        Signs the given (in the input file) context (which must be a transaction signing context)
+        for the given address using the given wallet. This command can output the resulting JSON
+        (with additional signature added) right to the console (if no output file and no RPC
+        endpoint specified) or into a file (which can be the same as input one). If an RPC endpoint
+        is given it'll also try to construct a complete transaction and send it via RPC (printing
+        its hash if everything is OK).
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            out (str):           file to put JSON transaction to
-            input_file (str):    file with JSON transaction
-            address (str):       Address to use
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            out: File to put JSON transaction to.
+            input_file: File with JSON transaction.
+            address: Address to use.
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 

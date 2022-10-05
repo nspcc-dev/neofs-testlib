@@ -4,12 +4,15 @@ from neofs_testlib.shell.interfaces import CommandResult
 
 
 def format_error_details(error: Exception) -> str:
-    """
-    Converts specified exception instance into a string that includes error message
-    and full stack trace.
+    """Converts specified exception instance into a string.
 
-    :param Exception error: exception to convert.
-    :return: string containing exception details.
+    The resulting string includes error message and the full stack trace.
+
+    Args:
+        error: Exception to convert.
+
+    Returns:
+        String containing exception details.
     """
     detail_lines = traceback.format_exception(
         etype=type(error),
@@ -20,11 +23,14 @@ def format_error_details(error: Exception) -> str:
 
 
 def get_output_lines(result: CommandResult) -> list[str]:
-    """
-    Converts output of specified command result into separate lines trimmed from whitespaces.
-    Empty lines are excluded.
+    """Converts output of specified command result into separate lines.
 
-    :param CommandResult result: result which output should be converted.
-    :return: list of lines extracted from the output.
+    Whitespaces are trimmed, empty lines are excluded.
+
+    Args:
+        result: Command result which output should be converted.
+
+    Returns:
+        List of lines extracted from the output.
     """
     return [line.strip() for line in result.stdout.split("\n") if line.strip()]

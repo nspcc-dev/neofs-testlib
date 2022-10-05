@@ -3,20 +3,15 @@ from neofs_testlib.shell import CommandResult
 
 
 class NeoGoQuery(CliCommand):
-    def candidates(
-        self,
-        rpc_endpoint: str,
-        timeout: int = 10,
-    ) -> CommandResult:
-        """Get candidates and votes
+    def candidates(self, rpc_endpoint: str, timeout: int = 10) -> CommandResult:
+        """Get candidates and votes.
 
         Args:
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "query candidates",
@@ -27,20 +22,15 @@ class NeoGoQuery(CliCommand):
             },
         )
 
-    def committee(
-        self,
-        rpc_endpoint: str,
-        timeout: int = 10,
-    ) -> CommandResult:
-        """Get committee list
+    def committee(self, rpc_endpoint: str, timeout: int = 10) -> CommandResult:
+        """Get committee list.
 
         Args:
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "query committee",
@@ -51,20 +41,15 @@ class NeoGoQuery(CliCommand):
             },
         )
 
-    def height(
-        self,
-        rpc_endpoint: str,
-        timeout: int = 10,
-    ) -> CommandResult:
-        """Get node height
+    def height(self, rpc_endpoint: str, timeout: int = 10) -> CommandResult:
+        """Get node height.
 
         Args:
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "query height",
@@ -75,22 +60,16 @@ class NeoGoQuery(CliCommand):
             },
         )
 
-    def tx(
-        self,
-        tx_hash: str,
-        rpc_endpoint: str,
-        timeout: int = 10,
-    ) -> CommandResult:
-        """Query transaction status
+    def tx(self, tx_hash: str, rpc_endpoint: str, timeout: int = 10) -> CommandResult:
+        """Query transaction status.
 
         Args:
-            tx_hash (str):       Hash of transaction
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            tx_hash: Hash of transaction.
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             f"query tx {tx_hash}",
@@ -101,20 +80,15 @@ class NeoGoQuery(CliCommand):
             },
         )
 
-    def voter(
-        self,
-        rpc_endpoint: str,
-        timeout: int = 10,
-    ) -> CommandResult:
-        """Print NEO holder account state
+    def voter(self, rpc_endpoint: str, timeout: int = 10) -> CommandResult:
+        """Print NEO holder account state.
 
         Args:
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "query voter",
