@@ -8,12 +8,27 @@ class InteractiveInput:
     """Interactive input for a shell command.
 
     Attributes:
-        prompt_pattern: regular expression that defines expected prompt from the command.
-        input: user input that should be supplied to the command in response to the prompt.
+        prompt_pattern: Regular expression that defines expected prompt from the command.
+        input: User input that should be supplied to the command in response to the prompt.
     """
 
     prompt_pattern: str
     input: str
+
+
+class CommandInspector(ABC):
+    """Interface of inspector that processes command text before execution."""
+
+    @abstractmethod
+    def inspect(self, command: str) -> str:
+        """Transforms command text and returns modified command.
+
+        Args:
+            command: Command to transform with this inspector.
+
+        Returns:
+            Transformed command text.
+        """
 
 
 @dataclass
@@ -21,14 +36,18 @@ class CommandOptions:
     """Options that control command execution.
 
     Attributes:
-        interactive_inputs: user inputs that should be interactively supplied to
+        interactive_inputs: User inputs that should be interactively supplied to
             the command during execution.
-        timeout: timeout for command execution (in seconds).
-        check: controls whether to check return code of the command. Set to False to
+        close_stdin: Controls whether stdin stream should be closed after feeding interactive
+            inputs or after requesting non-interactive command. If shell implementation does not
+            support this functionality, it should ignore this flag without raising an error.
+        timeout: Timeout for command execution (in seconds).
+        check: Controls whether to check return code of the command. Set to False to
             ignore non-zero return codes.
     """
 
     interactive_inputs: Optional[list[InteractiveInput]] = None
+    close_stdin: bool = False
     timeout: int = 30
     check: bool = True
 
@@ -38,9 +57,9 @@ class CommandResult:
     """Represents a result of a command executed via shell.
 
     Attributes:
-        stdout: complete content of stdout stream.
-        stderr: complete content of stderr stream.
-        return_code: return code (or exit code) of the command's process.
+        stdout: Complete content of stdout stream.
+        stderr: Complete content of stderr stream.
+        return_code: Return code (or exit code) of the command's process.
     """
 
     stdout: str

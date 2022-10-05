@@ -20,7 +20,7 @@ class AllureHandler(ReporterHandler):
         attachment_name, extension = os.path.splitext(file_name)
         attachment_type = self._resolve_attachment_type(extension)
 
-        allure.attach(body, attachment_name, attachment_type)
+        allure.attach(body, attachment_name, attachment_type, extension)
 
     def _resolve_attachment_type(self, extension: str) -> attachment_type:
         """Try to find matching Allure attachment type by extension.
@@ -30,5 +30,5 @@ class AllureHandler(ReporterHandler):
         extension = extension.lower()
         return next(
             (allure_type for allure_type in attachment_type if allure_type.extension == extension),
-            attachment_type.TXT,
+            attachment_type.TEXT,
         )
