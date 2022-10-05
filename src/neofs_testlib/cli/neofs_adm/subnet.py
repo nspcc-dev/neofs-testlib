@@ -11,15 +11,13 @@ class NeofsAdmMorphSubnet(CliCommand):
         """Create NeoFS subnet.
 
         Args:
-            address (str):       Address in the wallet, optional
-            notary (bool):       Flag to create subnet in notary environment
-            rpc_endpoint (str):  N3 RPC node endpoint
-            wallet (str):        Path to file with wallet
-
+            address: Address in the wallet, optional.
+            notary: Flag to create subnet in notary environment.
+            rpc_endpoint: N3 RPC node endpoint.
+            wallet: Path to file with wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph subnet create",
@@ -34,13 +32,11 @@ class NeofsAdmMorphSubnet(CliCommand):
         """Read information about the NeoFS subnet.
 
         Args:
-            rpc_endpoint (str):  N3 RPC node endpoint
-            subnet (str):        ID of the subnet to read
-
+            rpc_endpoint: N3 RPC node endpoint.
+            subnet: ID of the subnet to read.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph subnet get",
@@ -57,15 +53,13 @@ class NeofsAdmMorphSubnet(CliCommand):
         """Remove NeoFS subnet.
 
         Args:
-            address (str):       Address in the wallet, optional
-            rpc_endpoint (str):  N3 RPC node endpoint
-            subnet (str):        ID of the subnet to read
-            wallet (str):        Path to file with wallet
-
+            address: Address in the wallet, optional.
+            rpc_endpoint: N3 RPC node endpoint.
+            subnet: ID of the subnet to read.
+            wallet: Path to file with wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph subnet remove",
@@ -89,18 +83,16 @@ class NeofsAdmMorphSubnet(CliCommand):
         """Add admin to the NeoFS subnet.
 
         Args:
-            address (str):       Address in the wallet, optional
-            admin (str):         Hex-encoded public key of the admin
-            client (str):        Add client admin instead of node one
-            group (str):         Client group ID in text format (needed with --client only)
-            rpc_endpoint (str):  N3 RPC node endpoint
-            subnet (str):        ID of the subnet to read
-            wallet (str):        Path to file with wallet
-
+            address: Address in the wallet, optional.
+            admin: Hex-encoded public key of the admin.
+            client: Add client admin instead of node one.
+            group: Client group ID in text format (needed with --client only).
+            rpc_endpoint: N3 RPC node endpoint.
+            subnet: ID of the subnet to read.
+            wallet: Path to file with wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph subnet admin add",
@@ -123,17 +115,15 @@ class NeofsAdmMorphSubnet(CliCommand):
         """Remove admin of the NeoFS subnet.
 
         Args:
-            address (str):       Address in the wallet, optional
-            admin (str):         Hex-encoded public key of the admin
-            client (str):        Remove client admin instead of node one
-            rpc_endpoint (str):  N3 RPC node endpoint
-            subnet (str):        ID of the subnet to read
-            wallet (str):        Path to file with wallet
-
+            address: Address in the wallet, optional.
+            admin: Hex-encoded public key of the admin.
+            client: Remove client admin instead of node one.
+            rpc_endpoint: N3 RPC node endpoint.
+            subnet: ID of the subnet to read.
+            wallet: Path to file with wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph subnet admin remove",
@@ -156,17 +146,15 @@ class NeofsAdmMorphSubnet(CliCommand):
         """Add client to the NeoFS subnet.
 
         Args:
-            address (str):       Address in the wallet, optional
-            client (str):        Add client admin instead of node one
-            group (str):         Client group ID in text format (needed with --client only)
-            rpc_endpoint (str):  N3 RPC node endpoint
-            subnet (str):        ID of the subnet to read
-            wallet (str):        Path to file with wallet
-
+            address: Address in the wallet, optional.
+            client: Add client admin instead of node one.
+            group: Client group ID in text format (needed with --client only).
+            rpc_endpoint: N3 RPC node endpoint.
+            subnet: ID of the subnet to read.
+            wallet: Path to file with wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph subnet client add",
@@ -189,17 +177,15 @@ class NeofsAdmMorphSubnet(CliCommand):
         """Remove client of the NeoFS subnet.
 
         Args:
-            address (str):       Address in the wallet, optional
-            client (str):        Remove client admin instead of node one
-            group (str):         ID of the client group to work with
-            rpc_endpoint (str):  N3 RPC node endpoint
-            subnet (str):        ID of the subnet to read
-            wallet (str):        Path to file with wallet
-
+            address: Address in the wallet, optional.
+            client: Remove client admin instead of node one.
+            group: ID of the client group to work with.
+            rpc_endpoint: N3 RPC node endpoint.
+            subnet: ID of the subnet to read.
+            wallet: Path to file with wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph subnet client remove",
@@ -214,15 +200,13 @@ class NeofsAdmMorphSubnet(CliCommand):
         """Add node to the NeoFS subnet.
 
         Args:
-            node (str):          Hex-encoded public key of the node
-            rpc_endpoint (str):  N3 RPC node endpoint
-            subnet (str):        ID of the subnet to read
-            wallet (str):        Path to file with wallet
-
+            node: Hex-encoded public key of the node.
+            rpc_endpoint: N3 RPC node endpoint.
+            subnet: ID of the subnet to read.
+            wallet: Path to file with wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph subnet node add",
@@ -237,15 +221,13 @@ class NeofsAdmMorphSubnet(CliCommand):
         """Remove node from the NeoFS subnet.
 
         Args:
-            node (str):          Hex-encoded public key of the node
-            rpc_endpoint (str):  N3 RPC node endpoint
-            subnet (str):        ID of the subnet to read
-            wallet (str):        Path to file with wallet
-
+            node: Hex-encoded public key of the node.
+            rpc_endpoint: N3 RPC node endpoint.
+            subnet: ID of the subnet to read.
+            wallet: Path to file with wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph subnet node remove",

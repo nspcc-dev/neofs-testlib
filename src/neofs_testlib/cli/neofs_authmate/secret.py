@@ -14,19 +14,18 @@ class NeofsAuthmateSecret(CliCommand):
         address: Optional[str] = None,
         gate_address: Optional[str] = None,
     ) -> CommandResult:
-        """Obtain a secret from NeoFS network
+        """Obtain a secret from NeoFS network.
 
         Args:
-            wallet (str):         path to the wallet
-            address (str):        address of wallet account
-            peer (str):           address of neofs peer to connect to
-            gate_wallet (str):    path to the wallet
-            gate_address (str):   address of wallet account
-            access_key_id (str):  access key id for s3
+            wallet: Path to the wallet.
+            address: Address of wallet account.
+            peer: Address of neofs peer to connect to.
+            gate_wallet: Path to the wallet.
+            gate_address: Address of wallet account.
+            access_key_id: Access key id for s3.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "obtain-secret",
@@ -55,32 +54,26 @@ class NeofsAuthmateSecret(CliCommand):
         """Obtain a secret from NeoFS network
 
         Args:
-            wallet (str):                      path to the wallet
-            address (str):                     address of wallet account
-            peer (str):                        address of a neofs peer to connect to
-            bearer_rules (str):                rules for bearer token as plain json string
-            gate_public_key (str):             public 256r1 key of a gate (use flags repeatedly for
-                                               multiple gates)
-            container_id (str):                auth container id to put the secret into
-            container_friendly_name (str):     friendly name of auth container to put the
-                                               secret into
-            container_placement_policy (str):  placement policy of auth container to put the
-                                               secret into
-                                               (default: "REP 2 IN X CBF 3 SELECT 2 FROM * AS X")
-            session_tokens (str):              create session tokens with rules, if the rules are
-                                               set as 'none', no session tokens will be created
-            lifetime (str):                    Lifetime of tokens. For example 50h30m
-                                               (note: max time unit is an hour so to set a day you
-                                               should use 24h). It will be ceil rounded to the
-                                               nearest amount of epoch. (default: 720h0m0s)
-            container_policy (str):            mapping AWS storage class to NeoFS storage policy as
-                                               plain json string or path to json file
-            aws_cli_credentials (str):         path to the aws cli credential file
-
+            wallet: Path to the wallet.
+            address: Address of wallet account.
+            peer: Address of a neofs peer to connect to.
+            bearer_rules: Rules for bearer token as plain json string.
+            gate_public_key: Public 256r1 key of a gate (use flags repeatedly for multiple gates).
+            container_id: Auth container id to put the secret into.
+            container_friendly_name: Friendly name of auth container to put the secret into.
+            container_placement_policy: Placement policy of auth container to put the secret into
+                (default: "REP 2 IN X CBF 3 SELECT 2 FROM * AS X").
+            session_tokens: Create session tokens with rules, if the rules are set as 'none', no
+                session tokens will be created.
+            lifetime: Lifetime of tokens. For example 50h30m (note: max time unit is an hour so to
+                set a day you should use 24h). It will be ceil rounded to the nearest amount of
+                epoch. (default: 720h0m0s).
+            container_policy: Mapping AWS storage class to NeoFS storage policy as plain json string
+                or path to json file.
+            aws_cli_credentials: Path to the aws cli credential file.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "issue-secret",

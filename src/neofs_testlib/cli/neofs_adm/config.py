@@ -7,12 +7,10 @@ class NeofsAdmConfig(CliCommand):
         """Initialize basic neofs-adm configuration file.
 
         Args:
-            path (str):  path to config (default ~/.neofs/adm/config.yml)
-
+            path: Path to config (default ~/.neofs/adm/config.yml).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "config init",

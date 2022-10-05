@@ -16,16 +16,14 @@ class NeofsAdmMorph(CliCommand):
         """Deposit GAS for notary service.
 
         Args:
-            account (str):         wallet account address
-            gas (str):             amount of GAS to deposit
-            rpc_endpoint (str):    N3 RPC node endpoint
-            storage_wallet (str):  path to storage node wallet
-            till (str):            notary deposit duration in blocks
-
+            account: Wallet account address.
+            gas: Amount of GAS to deposit.
+            rpc_endpoint: N3 RPC node endpoint.
+            storage_wallet: Path to storage node wallet.
+            till: Notary deposit duration in blocks.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph deposit-notary",
@@ -44,19 +42,17 @@ class NeofsAdmMorph(CliCommand):
         script_hash: Optional[str] = None,
         storage: Optional[str] = None,
     ) -> CommandResult:
-        """Dump GAS balances
+        """Dump GAS balances.
 
         Args:
-            alphabet (str):      dump balances of alphabet contracts
-            proxy (str):         dump balances of the proxy contract
-            rpc_endpoint (str):  N3 RPC node endpoint
-            script_hash (str):   use script-hash format for addresses
-            storage (str):       dump balances of storage nodes from the current netmap
-
+            alphabet: Dump balances of alphabet contracts.
+            proxy: Dump balances of the proxy contract.
+            rpc_endpoint: N3 RPC node endpoint.
+            script_hash: Use script-hash format for addresses.
+            storage: Dump balances of storage nodes from the current netmap.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph dump-balances",
@@ -71,12 +67,10 @@ class NeofsAdmMorph(CliCommand):
         """Section for morph network configuration commands.
 
         Args:
-            rpc_endpoint (str):  N3 RPC node endpoint
-
+            rpc_endpoint: N3 RPC node endpoint
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph dump-config",
@@ -97,16 +91,13 @@ class NeofsAdmMorph(CliCommand):
         """Dump NeoFS containers to file.
 
         Args:
-            cid (str):                 containers to dump
-            container_contract (str):  container contract hash (for networks without NNS)
-            dump (str):                file where to save dumped containers
-                                       (default: ./testlib_dump_container)
-            rpc_endpoint (str):        N3 RPC node endpoint
-
+            cid: Containers to dump.
+            container_contract: Container contract hash (for networks without NNS).
+            dump: File where to save dumped containers (default: ./testlib_dump_container).
+            rpc_endpoint: N3 RPC node endpoint.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph dump-containers",
@@ -121,12 +112,10 @@ class NeofsAdmMorph(CliCommand):
         """Dump deployed contract hashes.
 
         Args:
-            rpc_endpoint (str):        N3 RPC node endpoint
-
+            rpc_endpoint: N3 RPC node endpoint.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph dump-hashes",
@@ -140,16 +129,14 @@ class NeofsAdmMorph(CliCommand):
     def force_new_epoch(
         self, rpc_endpoint: Optional[str] = None, alphabet: Optional[str] = None
     ) -> CommandResult:
-        """Create new NeoFS epoch event in the side chain
+        """Create new NeoFS epoch event in the side chain.
 
         Args:
-            alphabet (str):      path to alphabet wallets dir
-            rpc_endpoint (str):  N3 RPC node endpoint
-
+            alphabet: Path to alphabet wallets dir.
+            rpc_endpoint: N3 RPC node endpoint.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph force-new-epoch",
@@ -166,17 +153,15 @@ class NeofsAdmMorph(CliCommand):
         alphabet_wallets: str,
         size: int = 7,
     ) -> CommandResult:
-        """Generate alphabet wallets for consensus nodes of the morph network
+        """Generate alphabet wallets for consensus nodes of the morph network.
 
         Args:
-            alphabet_wallets (str):  path to alphabet wallets dir
-            size (int):              amount of alphabet wallets to generate (default 7)
-            rpc_endpoint (str):      N3 RPC node endpoint
-
+            alphabet_wallets: Path to alphabet wallets dir.
+            size: Amount of alphabet wallets to generate (default 7).
+            rpc_endpoint: N3 RPC node endpoint.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph generate-alphabet",
@@ -194,18 +179,16 @@ class NeofsAdmMorph(CliCommand):
         storage_wallet: str,
         initial_gas: Optional[str] = None,
     ) -> CommandResult:
-        """Generate storage node wallet for the morph network
+        """Generate storage node wallet for the morph network.
 
         Args:
-            alphabet_wallets (str):  path to alphabet wallets dir
-            initial_gas (str):       initial amount of GAS to transfer
-            rpc_endpoint (str):      N3 RPC node endpoint
-            storage_wallet (str):    path to new storage node wallet
-
+            alphabet_wallets: Path to alphabet wallets dir.
+            initial_gas: Initial amount of GAS to transfer.
+            rpc_endpoint: N3 RPC node endpoint.
+            storage_wallet: Path to new storage node wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph generate-storage-wallet",
@@ -232,23 +215,20 @@ class NeofsAdmMorph(CliCommand):
         """Section for morph network configuration commands.
 
         Args:
-            alphabet_wallets (str):        path to alphabet wallets dir
-            container_alias_fee (int):     container alias fee (default 500)
-            container_fee (int):           container registration fee (default 1000)
-            contracts (str):               path to archive with compiled NeoFS contracts
-                                           (default fetched from latest github release)
-            epoch_duration (int):          amount of side chain blocks in one NeoFS epoch
-                                           (default 240)
-            homomorphic_disabled: (bool):  disable object homomorphic hashing
-            local_dump (str):              path to the blocks dump file
-            max_object_size (int):         max single object size in bytes (default 67108864)
-            protocol (str):                path to the consensus node configuration
-            rpc_endpoint (str):            N3 RPC node endpoint
-
+            alphabet_wallets: Path to alphabet wallets dir.
+            container_alias_fee: Container alias fee (default 500).
+            container_fee: Container registration fee (default 1000).
+            contracts: Path to archive with compiled NeoFS contracts
+                (default fetched from latest github release).
+            epoch_duration: Amount of side chain blocks in one NeoFS epoch (default 240).
+            homomorphic_disabled: Disable object homomorphic hashing.
+            local_dump: Path to the blocks dump file.
+            max_object_size: Max single object size in bytes (default 67108864).
+            protocol: Path to the consensus node configuration.
+            rpc_endpoint: N3 RPC node endpoint.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph init",
@@ -269,15 +249,13 @@ class NeofsAdmMorph(CliCommand):
         """Refill GAS of storage node's wallet in the morph network
 
         Args:
-            alphabet_wallets (str):  path to alphabet wallets dir
-            gas (str):               additional amount of GAS to transfer
-            rpc_endpoint (str):      N3 RPC node endpoint
-            storage_wallet (str):    path to new storage node wallet
-
+            alphabet_wallets: Path to alphabet wallets dir.
+            gas: Additional amount of GAS to transfer.
+            rpc_endpoint: N3 RPC node endpoint.
+            storage_wallet: Path to new storage node wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph refill-gas",
@@ -298,15 +276,13 @@ class NeofsAdmMorph(CliCommand):
         """Restore NeoFS containers from file.
 
         Args:
-            alphabet_wallets (str):  path to alphabet wallets dir
-            cid (str):               containers to restore
-            dump (str):              file to restore containers from
-            rpc_endpoint (str):      N3 RPC node endpoint
-
+            alphabet_wallets: Path to alphabet wallets dir.
+            cid: Containers to restore.
+            dump: File to restore containers from.
+            rpc_endpoint: N3 RPC node endpoint.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph restore-containers",
@@ -325,19 +301,17 @@ class NeofsAdmMorph(CliCommand):
         storage_price: Optional[int] = None,
         fee_per_byte: Optional[int] = None,
     ) -> CommandResult:
-        """Set global policy values
+        """Set global policy values.
 
         Args:
-            alphabet_wallets (str):  path to alphabet wallets dir
-            exec_fee_factor (int):   ExecFeeFactor=<n1>
-            storage_price (int):     StoragePrice=<n2>
-            fee_per_byte (int):      FeePerByte=<n3>
-            rpc_endpoint (str):      N3 RPC node endpoint
-
+            alphabet_wallets: Path to alphabet wallets dir.
+            exec_fee_factor: ExecFeeFactor=<n1>.
+            storage_price: StoragePrice=<n2>.
+            fee_per_byte: FeePerByte=<n3>.
+            rpc_endpoint: N3 RPC node endpoint.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         non_param_attribute = ""
         if exec_fee_factor:
@@ -364,15 +338,13 @@ class NeofsAdmMorph(CliCommand):
         """Update NeoFS contracts.
 
         Args:
-            alphabet_wallets (str):  path to alphabet wallets dir
-            contracts (str):         path to archive with compiled NeoFS contracts
-                                     (default fetched from latest github release)
-            rpc_endpoint (str):      N3 RPC node endpoint
-
+            alphabet_wallets: Path to alphabet wallets dir.
+            contracts: Path to archive with compiled NeoFS contracts
+                (default fetched from latest github release).
+            rpc_endpoint: N3 RPC node endpoint.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "morph update-contracts",

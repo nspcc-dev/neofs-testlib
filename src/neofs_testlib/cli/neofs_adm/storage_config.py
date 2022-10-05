@@ -7,13 +7,11 @@ class NeofsAdmStorageConfig(CliCommand):
         """Initialize basic neofs-adm configuration file.
 
         Args:
-            account (str):  wallet account
-            wallet (str):   path to wallet
-
+            account: Wallet account.
+            wallet: Path to wallet.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "storage-config",

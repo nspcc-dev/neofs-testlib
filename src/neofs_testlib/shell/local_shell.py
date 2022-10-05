@@ -14,9 +14,7 @@ reporter = get_reporter()
 
 
 class LocalShell(Shell):
-    """
-    Implements command shell on a local machine.
-    """
+    """Implements command shell on a local machine."""
 
     def exec(self, command: str, options: Optional[CommandOptions] = None) -> CommandResult:
         # If no options were provided, use default options
@@ -122,7 +120,8 @@ class LocalShell(Shell):
     def _get_pexpect_process_result(
         self, command_process: Optional[pexpect.spawn], command: str
     ) -> CommandResult:
-        """
+        """Captures output of the process.
+
         If command process is not None, captures output of this process.
         If command process is None, then command fails when we attempt to start it, in this case
         we use regular non-interactive process to get it's output.

@@ -4,10 +4,9 @@ from neofs_testlib.shell import CommandResult
 
 class NeoGoVersion(CliCommand):
     def get(self) -> CommandResult:
-        """Application version
+        """Application version.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute("", version=True)

@@ -26,7 +26,7 @@ reporter = get_reporter()
 
 
 class HostIsNotAvailable(Exception):
-    """Raised when host is not reachable via SSH connection"""
+    """Raised when host is not reachable via SSH connection."""
 
     def __init__(self, host: str = None):
         msg = f"Host {host} is not available"
@@ -63,8 +63,7 @@ def log_command(func):
 
 @lru_cache
 def _load_private_key(file_path: str, password: Optional[str]) -> PKey:
-    """
-    Loads private key from specified file.
+    """Loads private key from specified file.
 
     We support several type formats, however paramiko doesn't provide functionality to determine
     key type in advance. So we attempt to load file with each of the supported formats and then
@@ -81,9 +80,7 @@ def _load_private_key(file_path: str, password: Optional[str]) -> PKey:
 
 
 class SSHShell(Shell):
-    """
-    Implements command shell on a remote machine via SSH connection.
-    """
+    """Implements command shell on a remote machine via SSH connection."""
 
     # Time in seconds to delay after remote command has completed. The delay is required
     # to allow remote command to flush its output buffer

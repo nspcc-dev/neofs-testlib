@@ -16,22 +16,21 @@ class NeoGoContract(CliCommand):
         no_permissions: bool = False,
         bindings: Optional[str] = None,
     ) -> CommandResult:
-        """Compile a smart contract to a .nef file
+        """Compile a smart contract to a .nef file.
 
         Args:
-            input_file (str):      Input file for the smart contract to be compiled
-            out (str):             Output of the compiled contract
-            manifest (str):        Emit contract manifest (*.manifest.json) file into separate
-                                   file using configuration input file (*.yml)
-            config (str):          Configuration input file (*.yml)
-            no_standards (bool):   do not check compliance with supported standards
-            no_events (bool):      do not check emitted events with the manifest
-            no_permissions (bool): do not check if invoked contracts are allowed in manifest
-            bindings (str):        output file for smart-contract bindings configuration
+            input_file: Input file for the smart contract to be compiled.
+            out: Output of the compiled contract.
+            manifest: Emit contract manifest (*.manifest.json) file into separate file using
+                configuration input file (*.yml).
+            config: Configuration input file (*.yml).
+            no_standards: Do not check compliance with supported standards.
+            no_events: Do not check emitted events with the manifest.
+            no_permissions: Do not check if invoked contracts are allowed in manifest.
+            bindings: Output file for smart-contract bindings configuration.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "contract compile",
@@ -59,24 +58,23 @@ class NeoGoContract(CliCommand):
         """Deploy a smart contract (.nef with description)
 
         Args:
-            wallet (str):        wallet to use to get the key for transaction signing;
-                                 conflicts with wallet_config
-            wallet_config (str): path to wallet config to use to get the key for transaction
-                                 signing; conflicts with wallet
-            address (str):       address to use as transaction signee (and gas source)
-            gas (float):         network fee to add to the transaction (prioritizing it)
-            sysgas (float):      system fee to add to transaction (compensating for execution)
-            out (str):           file to put JSON transaction to
-            force (bool):        Do not ask for a confirmation
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
-            input_file (str):    Input file for the smart contract (*.nef)
-            manifest (str):      Emit contract manifest (*.manifest.json) file into separate
-                                 file using configuration input file (*.yml)
+            wallet: Wallet to use to get the key for transaction signing;
+                conflicts with wallet_config.
+            wallet_config: Path to wallet config to use to get the key for transaction signing;
+                conflicts with wallet.
+            address: Address to use as transaction signee (and gas source).
+            gas: Network fee to add to the transaction (prioritizing it).
+            sysgas: System fee to add to transaction (compensating for execution).
+            out: File to put JSON transaction to.
+            force: Do not ask for a confirmation.
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
+            input_file: Input file for the smart contract (*.nef).
+            manifest: Emit contract manifest (*.manifest.json) file into separate file using
+                configuration input file (*.yml).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -96,17 +94,16 @@ class NeoGoContract(CliCommand):
         config: Optional[str] = None,
         manifest: Optional[str] = None,
     ) -> CommandResult:
-        """Generate wrapper to use in other contracts
+        """Generate wrapper to use in other contracts.
 
         Args:
-            config (str):    Configuration file to use
-            manifest (str):  Read contract manifest (*.manifest.json) file
-            out (str):       Output of the compiled contract
-            hash (str):      Smart-contract hash
+            config: Configuration file to use.
+            manifest: Read contract manifest (*.manifest.json) file.
+            out: Output of the compiled contract.
+            hash: Smart-contract hash.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "contract generate-wrapper",
@@ -133,34 +130,33 @@ class NeoGoContract(CliCommand):
         rpc_endpoint: Optional[str] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """Executes given (as a script hash) deployed script with the given method,
-            arguments and signers. Sender is included in the list of signers by default
-            with None witness scope. If you'd like to change default sender's scope,
-            specify it via signers parameter. See testinvokefunction documentation for
-            the details about parameters. It differs from testinvokefunction in that this
-            command sends an invocation transaction to the network.
+        """Executes given (as a script hash) deployed script.
+
+        Script is executed with the given method, arguments and signers. Sender is included in
+        the list of signers by default with None witness scope. If you'd like to change default
+        sender's scope, specify it via signers parameter. See testinvokefunction documentation
+        for the details about parameters. It differs from testinvokefunction in that this command
+        sends an invocation transaction to the network.
 
         Args:
-            scripthash (str):    Function hash
-            method (str):        Call method
-            arguments (str):     Method arguments
-            multisig_hash (str): Multisig hash
-            wallet (str):        wallet to use to get the key for transaction signing;
-                                 conflicts with wallet_config
-            wallet_config (str): path to wallet config to use to get the key for transaction
-                                 signing; conflicts with wallet
-            address (str):       address to use as transaction signee (and gas source)
-            gas (float):         network fee to add to the transaction (prioritizing it)
-            sysgas (float):      system fee to add to transaction (compensating for execution)
-            out (str):           file to put JSON transaction to
-            force (bool):        force-push the transaction in case of bad VM state after
-                                 test script invocation
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            scripthash: Function hash.
+            method: Call method.
+            arguments: Method arguments.
+            multisig_hash: Multisig hash.
+            wallet: Wallet to use to get the key for transaction signing;
+                conflicts with wallet_config.
+            wallet_config: Path to wallet config to use to get the key for transaction signing;
+                conflicts with wallet.
+            address: Address to use as transaction signee (and gas source).
+            gas: Network fee to add to the transaction (prioritizing it).
+            sysgas: System fee to add to transaction (compensating for execution).
+            out: File to put JSON transaction to.
+            force: Force-push the transaction in case of bad VM state after test script invocation.
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         multisig_hash = f"-- {multisig_hash}" or ""
         return self._execute(
@@ -183,28 +179,27 @@ class NeoGoContract(CliCommand):
         rpc_endpoint: Optional[str] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """Executes given (as a script hash) deployed script with the given method,
-           arguments and signers (sender is not included by default). If no method is given
-           "" is passed to the script, if no arguments are given, an empty array is
-           passed, if no signers are given no array is passed. If signers are specified,
-           the first one of them is treated as a sender. All of the given arguments are
-           encapsulated into array before invoking the script. The script thus should
-           follow the regular convention of smart contract arguments (method string and
-           an array of other arguments).
+        """Executes given (as a script hash) deployed script.
 
-           See more information and samples in `neo-go contract testinvokefunction --help`
+        Script is executed with the given method, arguments and signers (sender is not included
+        by default). If no method is given "" is passed to the script, if no arguments are given,
+        an empty array is passed, if no signers are given no array is passed. If signers are
+        specified, the first one of them is treated as a sender. All of the given arguments are
+        encapsulated into array before invoking the script. The script thus should follow the
+        regular convention of smart contract arguments (method string and an array of other
+        arguments).
+        See more information and samples in `neo-go contract testinvokefunction --help`.
 
         Args:
-            scripthash (str):    Function hash
-            method (str):        Call method
-            arguments (str):     Method arguments
-            multisig_hash (str): Multisig hash
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            scripthash: Function hash.
+            method: Call method.
+            arguments: Method arguments.
+            multisig_hash: Multisig hash.
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         multisig_hash = f"-- {multisig_hash}" or ""
         return self._execute(
@@ -223,20 +218,18 @@ class NeoGoContract(CliCommand):
         rpc_endpoint: Optional[str] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """Executes given compiled AVM instructions in NEF format with the given set of
-           signers not included sender by default. See testinvokefunction documentation
-           for the details about parameters.
+        """Executes given compiled AVM instructions in NEF format.
 
+        Instructions are executed with the given set of signers not including sender by default.
+        See testinvokefunction documentation for the details about parameters.
 
         Args:
-            input_file (str):    Input location of the .nef file that needs to be invoked
-                                 conflicts with wallet_config
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            input_file: Input location of the .nef file that needs to be invoked.
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             f"contract testinvokescript",
@@ -247,20 +240,15 @@ class NeoGoContract(CliCommand):
             },
         )
 
-    def init(
-        self,
-        name: str,
-        skip_details: bool = False,
-    ) -> CommandResult:
-        """Initialize a new smart-contract in a directory with boiler plate code
+    def init(self, name: str, skip_details: bool = False) -> CommandResult:
+        """Initialize a new smart-contract in a directory with boiler plate code.
 
         Args:
-            name (str):          name of the smart-contract to be initialized
-            skip_details (bool): skip filling in the projects and contract details
+            name: Name of the smart-contract to be initialized.
+            skip_details: Skip filling in the projects and contract details.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "contract init",
@@ -276,15 +264,14 @@ class NeoGoContract(CliCommand):
         input_file: Optional[str] = None,
         compile: Optional[str] = None,
     ) -> CommandResult:
-        """Creates a user readable dump of the program instructions
+        """Creates a user readable dump of the program instructions.
 
         Args:
-            input_file (str): input file of the program (either .go or .nef)
-            compile (str):    compile input file (it should be go code then)
+            input_file: Input file of the program (either .go or .nef).
+            compile: Compile input file (it should be go code then).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "contract inspect",
@@ -301,16 +288,15 @@ class NeoGoContract(CliCommand):
         manifest: str,
         sender: Optional[str] = None,
     ) -> CommandResult:
-        """Calculates hash of a contract after deployment
+        """Calculates hash of a contract after deployment.
 
         Args:
-            input_file (str): path to NEF file
-            sender (str):     sender script hash or address
-            manifest (str):   path to manifest file
+            input_file: Path to NEF file.
+            sender: Sender script hash or address.
+            manifest: Path to manifest file.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "contract calc-hash",
@@ -330,22 +316,18 @@ class NeoGoContract(CliCommand):
         sender: Optional[str] = None,
         nef: Optional[str] = None,
     ) -> CommandResult:
-        """Adds group to the manifest
+        """Adds group to the manifest.
 
         Args:
-            wallet (str):        wallet to use to get the key for transaction signing;
-                                 conflicts with wallet_config
-            wallet_config (str): path to wallet config to use to get the key for transaction
-                                 signing; conflicts with wallet
-            sender (str):        deploy transaction sender
-            address (str):       account to sign group with
-            nef (str):           path to the NEF file
-            manifest (str):      path to the manifest
-
+            wallet: Wallet to use to get the key for transaction signing; conflicts with wallet_config.
+            wallet_config: Path to wallet config to use to get the key for transaction signing; conflicts with wallet.
+            sender: Deploy transaction sender.
+            address: Account to sign group with.
+            nef: Path to the NEF file.
+            manifest: Path to the manifest.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "contract manifest add-group",

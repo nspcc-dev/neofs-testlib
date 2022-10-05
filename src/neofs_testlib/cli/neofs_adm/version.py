@@ -7,7 +7,6 @@ class NeofsAdmVersion(CliCommand):
         """Application version
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute("", version=True)

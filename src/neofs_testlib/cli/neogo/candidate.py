@@ -14,22 +14,19 @@ class NeoGoCandidate(CliCommand):
         gas: Optional[float] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """Register as a new candidate
+        """Register as a new candidate.
 
         Args:
-            address (str):       Address to register
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            gas (float):         network fee to add to the transaction (prioritizing it)
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
-
+            address: Address to register.
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            gas: Network fee to add to the transaction (prioritizing it).
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -51,22 +48,19 @@ class NeoGoCandidate(CliCommand):
         gas: Optional[float] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """Unregister self as a candidate
+        """Unregister self as a candidate.
 
         Args:
-            address (str):       Address to unregister
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            gas (float):         network fee to add to the transaction (prioritizing it)
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
-
+            address: Address to unregister.
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            gas: Network fee to add to the transaction (prioritizing it).
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -88,23 +82,22 @@ class NeoGoCandidate(CliCommand):
         gas: Optional[float] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """Votes for a validator by calling "vote" method of a NEO native
-           contract. Do not provide candidate argument to perform unvoting.
+        """Votes for a validator.
 
+        Voting happens by calling "vote" method of a NEO native contract. Do not provide
+        candidate argument to perform unvoting.
 
         Args:
-            candidate (str):     Public key of candidate to vote for
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            gas (float):         network fee to add to the transaction (prioritizing it)
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            candidate: Public key of candidate to vote for.
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            gas: Network fee to add to the transaction (prioritizing it).
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 

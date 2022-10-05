@@ -14,21 +14,19 @@ class NeoGoNep17(CliCommand):
         wallet_config: Optional[str] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """Get address balance
+        """Get address balance.
 
         Args:
-            address (str):       Address to use
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            token (str):         Token to use (hash or name (for NEO/GAS or imported tokens))
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            address: Address to use.
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            token: Token to use (hash or name (for NEO/GAS or imported tokens)).
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -50,21 +48,19 @@ class NeoGoNep17(CliCommand):
         rpc_endpoint: Optional[str] = None,
         timeout: int = 10,
     ) -> CommandResult:
-        """import NEP-17 token to a wallet
+        """Import NEP-17 token to a wallet.
 
         Args:
-            address (str):       Token contract address or hash in LE
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            token (str):         Token to use (hash or name (for NEO/GAS or imported tokens))
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
+            address: Token contract address or hash in LE.
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            token: Token to use (hash or name (for NEO/GAS or imported tokens)).
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -83,18 +79,16 @@ class NeoGoNep17(CliCommand):
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
     ) -> CommandResult:
-        """print imported NEP-17 token info
+        """Print imported NEP-17 token info.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            token (str):         Token to use (hash or name (for NEO/GAS or imported tokens))
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            token: Token to use (hash or name (for NEO/GAS or imported tokens)).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -114,19 +108,17 @@ class NeoGoNep17(CliCommand):
         wallet_config: Optional[str] = None,
         force: bool = False,
     ) -> CommandResult:
-        """remove NEP-17 token from the wallet
+        """Remove NEP-17 token from the wallet.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            token (str):         Token to use (hash or name (for NEO/GAS or imported tokens))
-            force (bool):        Do not ask for a confirmation
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            token: Token to use (hash or name (for NEO/GAS or imported tokens)).
+            force: Do not ask for a confirmation.
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         return self._execute(
             "wallet nep17 remove",
@@ -152,33 +144,32 @@ class NeoGoNep17(CliCommand):
         amount: float = 0,
         timeout: int = 10,
     ) -> CommandResult:
-        """Transfers specified NEP-17 token amount with optional 'data' parameter and cosigners
-        list attached to the transfer. See 'contract testinvokefunction' documentation
-        for the details about 'data' parameter and cosigners syntax. If no 'data' is
-        given then default nil value will be used. If no cosigners are given then the
-        sender with CalledByEntry scope will be used as the only signer.
+        """Transfers specified NEP-17 token amount.
+
+        Transfer is executed with optional 'data' parameter and cosigners list attached to the
+        transfer. See 'contract testinvokefunction' documentation for the details about 'data'
+        parameter and cosigners syntax. If no 'data' is given then default nil value will be used.
+        If no cosigners are given then the sender with CalledByEntry scope will be used as the only
+        signer.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            out (str):           file to put JSON transaction to
-            from_address (str):  Address to send an asset from
-            to_address (str):    Address to send an asset to
-            token (str):         Token to use (hash or name (for NEO/GAS or imported tokens))
-            force (bool):        Do not ask for a confirmation
-            gas (float):         network fee to add to the transaction (prioritizing it)
-            sysgas (float):      system fee to add to transaction (compensating for execution)
-            force (bool):        Do not ask for a confirmation
-            amount (float)       Amount of asset to send
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
-
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            out: File to put JSON transaction to.
+            from_address: Address to send an asset from.
+            to_address: Address to send an asset to.
+            token: Token to use (hash or name (for NEO/GAS or imported tokens)).
+            force: Do not ask for a confirmation.
+            gas: Network fee to add to the transaction (prioritizing it).
+            sysgas: System fee to add to transaction (compensating for execution).
+            force: Do not ask for a confirmation.
+            amount: Amount of asset to send.
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
@@ -206,29 +197,26 @@ class NeoGoNep17(CliCommand):
         amount: float = 0,
         timeout: int = 10,
     ) -> CommandResult:
-        """transfer NEP-17 tokens to multiple recipients
+        """Transfer NEP-17 tokens to multiple recipients.
 
         Args:
-            wallet (str):        Target location of the wallet file ('-' to read from stdin);
-                                 conflicts with --wallet-config flag.
-            wallet_config (str): Target location of the wallet config file;
-                                 conflicts with --wallet flag.
-            out (str):           file to put JSON transaction to
-            from_address (str):  Address to send an asset from
-            to_address (str):    Address to send an asset to
-            token (str):         Token to use (hash or name (for NEO/GAS or imported tokens))
-            force (bool):        Do not ask for a confirmation
-            gas (float):         network fee to add to the transaction (prioritizing it)
-            sysgas (float):      system fee to add to transaction (compensating for execution)
-            force (bool):        Do not ask for a confirmation
-            amount (float)       Amount of asset to send
-            rpc_endpoint (str):  RPC node address
-            timeout (int):       Timeout for the operation (default: 10s)
-
+            wallet: Target location of the wallet file ('-' to read from stdin);
+                conflicts with --wallet-config flag.
+            wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            out: File to put JSON transaction to.
+            from_address: Address to send an asset from.
+            to_address: Address to send an asset to.
+            token: Token to use (hash or name (for NEO/GAS or imported tokens)).
+            force: Do not ask for a confirmation.
+            gas: Network fee to add to the transaction (prioritizing it).
+            sysgas: System fee to add to transaction (compensating for execution).
+            force: Do not ask for a confirmation.
+            amount: Amount of asset to send.
+            rpc_endpoint: RPC node address.
+            timeout: Timeout for the operation (default: 10s).
 
         Returns:
-            str: Command string
-
+            Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
