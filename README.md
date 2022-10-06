@@ -8,44 +8,44 @@ $ pip install neofs-testlib
 ```
 
 ## Configuration
-Library components can be configured explicitly via code or implicitly via configuration file that supports plugin-based extensions.
-
-By default testlib uses configuration from file `.neofs-testlib.yaml` that must be located next to the process entry point. Path to the file can be customized via environment variable `NEOFS_TESTLIB_CONFIG`. Config file should have either YAML or JSON format.
+Some library components support configuration that allows dynamic loading of extensions via plugins. Configuration of such components is described in this section.
 
 ### Reporter Configuration
-Currently only reporter component can be configured. Function `set_reporter` assigns current reporter that should be used in the library:
+Reporter is a singleton component that is used by the library to store test artifacts.
+
+Reporter sends artifacts to handlers that are responsible for actual storing in particular system. By default reporter is initialized without any handlers and won't take any actions to store the artifacts. To add handlers directly via code you can use method `register_handler`:
 
 ```python
-from neofs_testlib.reporter import AllureReporter, set_reporter
+from neofs_testlib.reporter import AllureHandler, get_reporter
 
-reporter = AllureReporter()
-set_reporter(reporter)
+get_reporter().register_handler(AllureHandler())
 ```
 
-Assignment of reporter must happen before any testlib modules were imported. Otherwise, testlib code will bind to default dummy reporter. It is not convenient to call utility functions at specific time, so alternative approach is to set reporter in configuration file. To do that, please, specify name of reporter plugin in configuration parameter `reporter`:
-```yaml
-reporter: allure
-```
+This registration should happen early at the test session, because any artifacts produced before handler is registered won't be stored anywhere.
 
-Testlib provides two built-in reporters: `allure` and `dummy`. However, you can use any custom reporter via [plugins](#plugins).
+Alternative approach for registering handlers is to use method `configure`. It is similar to method [dictConfig](https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig) in a sense that it receives a config structure that describes handlers that should be registered in the reporter. Each handler is defined by it's plugin name; for example, to register the built-in Allure handler, we can use the following config:
+
+```python
+get_reporter().configure({ "handlers": [{"plugin_name": "allure"}] })
+```
 
 ## Plugins
 Testlib uses [entrypoint specification](https://docs.python.org/3/library/importlib.metadata.html) for plugins. Testlib supports the following entrypoint groups for plugins:
- - `neofs.testlib.reporter` - group for reporter plugins. Plugin should be a class that implements interface `neofs_testlib.reporter.interfaces.Reporter`.
+ - `neofs.testlib.reporter` - group for reporter handler plugins. Plugin should be a class that implements interface `neofs_testlib.reporter.interfaces.ReporterHandler`.
 
 ### Example reporter plugin
 In this example we will consider two Python projects:
  - Project "my_neofs_plugins" where we will build a plugin that extends testlib functionality.
  - Project "my_neofs_tests" that uses "neofs_testlib" and "my_neofs_plugins" to build some tests.
 
-Let's say we want to implement some custom reporter that can be used as a plugin for testlib. Pseudo-code of implementation can look like that:
+Let's say we want to implement some custom reporter handler that can be used as a plugin for testlib. Pseudo-code of implementation can look like that:
 ```python
-# my_neofs_plugins/src/x/y/z/custom_reporter.py
+# File my_neofs_plugins/src/foo/bar/custom_handler.py
 from contextlib import AbstractContextManager
-from neofs_testlib.reporter.interfaces import Reporter
+from neofs_testlib.reporter import ReporterHandler
 
 
-class CustomReporter(Reporter):
+class CustomHandler(ReporterHandler):
     def step(self, name: str) -> AbstractContextManager:
         ... some implementation ...
 
@@ -53,20 +53,23 @@ class CustomReporter(Reporter):
         ... some implementation ...
 ```
 
-Then in `pyproject.toml` of "my_neofs_plugins" we should register entrypoint for this plugin. Entrypoint must belong to the group `neofs.testlib.reporter`:
+Then in the file `pyproject.toml` of "my_neofs_plugins" we should register entrypoint for this plugin. Entrypoint must belong to the group `neofs.testlib.reporter`:
 ```yaml
-# my_neofs_plugins/pyproject.toml
+# File my_neofs_plugins/pyproject.toml
 [project.entry-points."neofs.testlib.reporter"]
-my_custom_reporter = "x.y.z.custom_reporter:CustomReporter"
+my_custom_handler = "foo.bar.custom_handler:CustomHandler"
 ```
 
-Finally, to use this reporter in our test project "my_neofs_tests", we should specify its entrypoint name in testlib config:
-```yaml
-# my_neofs_tests/pyproject.toml
-reporter: my_custom_reporter
+Finally, to use this handler in our test project "my_neofs_tests", we should configure reporter with name of the handler plugin:
+
+```python
+# File my_neofs_tests/src/conftest.py
+from neofs_testlib.reporter import get_reporter
+
+get_reporter().configure({ "handlers": [{"plugin_name": "my_custom_handler"}] })
 ```
 
-Detailed information on registering entrypoints can be found at [setuptools docs](https://setuptools.pypa.io/en/latest/userguide/entry_point.html).
+Detailed information about registering entrypoints can be found at [setuptools docs](https://setuptools.pypa.io/en/latest/userguide/entry_point.html).
 
 ## Library structure
 The library provides the following primary components:
