@@ -3,8 +3,8 @@ from contextlib import AbstractContextManager
 from typing import Any
 
 
-class Reporter(ABC):
-    """Interface that supports storage of test artifacts in some reporting tool."""
+class ReporterHandler(ABC):
+    """Interface of handler that stores test artifacts in some reporting tool."""
 
     @abstractmethod
     def step(self, name: str) -> AbstractContextManager:

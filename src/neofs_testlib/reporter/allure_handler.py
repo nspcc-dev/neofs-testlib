@@ -6,13 +6,11 @@ from typing import Any
 import allure
 from allure import attachment_type
 
-from neofs_testlib.reporter.interfaces import Reporter
+from neofs_testlib.reporter.interfaces import ReporterHandler
 
 
-class AllureReporter(Reporter):
-    """
-    Implements storing of test artifacts in Allure report.
-    """
+class AllureHandler(ReporterHandler):
+    """Handler that stores test artifacts in Allure report."""
 
     def step(self, name: str) -> AbstractContextManager:
         name = shorten(name, width=70, placeholder="...")
@@ -25,9 +23,9 @@ class AllureReporter(Reporter):
         allure.attach(body, attachment_name, attachment_type)
 
     def _resolve_attachment_type(self, extension: str) -> attachment_type:
-        """
-        Try to find matching Allure attachment type by extension. If no match was found,
-        default to TXT format.
+        """Try to find matching Allure attachment type by extension.
+
+        If no match was found, default to TXT format.
         """
         extension = extension.lower()
         return next(

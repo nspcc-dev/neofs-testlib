@@ -20,7 +20,6 @@ dependencies = [
     "importlib_metadata>=5.0; python_version < '3.10'",
     "paramiko>=2.10.3",
     "pexpect>=4.8.0",
-    "pyyaml>=6.0",
 ]
 requires-python = ">=3.9"
 
@@ -31,8 +30,7 @@ dev = ["black", "bumpver", "isort", "pre-commit"]
 Homepage = "https://github.com/nspcc-dev/neofs-testlib"
 
 [project.entry-points."neofs.testlib.reporter"]
-allure = "neofs_testlib.reporter.allure_reporter:AllureReporter"
-dummy = "neofs_testlib.reporter.dummy_reporter:DummyReporter"
+allure = "neofs_testlib.reporter.allure_handler:AllureHandler"
 
 [tool.isort]
 profile = "black"
