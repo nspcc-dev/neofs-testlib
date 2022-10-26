@@ -188,6 +188,30 @@ If you would like to modify code of the library in the integration with your tes
 $ pip install -e ../neofs-testlib
 ```
 
+# Maintaining guide
+
+## Versioning
+We follow [Semantic Versioning Specification](https://semver.org/) to version this library. To manage version number in the source code, we use [bumpver](https://pypi.org/project/bumpver/) package.
+
+To update a version of the library, please, take the following steps:
+1. Make sure that your have no pending changes in git.
+2. Run the following command to update version and commit it to git:
+    ```shell
+    $ bumpver update --major   # to update major version
+    $ bumpver update --minor   # to update minor version
+    $ bumpver update --patch   # to update the patch component of the version
+    ```
+3. Sign-off the created commit:
+    ```shell
+    $ git commit --amend --signoff
+    ```
+4. Push the changes to remote.
+5. After this commit is merged to upstream, create a tag on the master branch of upstream:
+    ```shell
+    $ git tag <new_version>
+    $ git push upstream <new_version>
+    ```
+
 ## Building and publishing package
 To build Python package of the library, please run the following command in the library root directory:
 ```shell
