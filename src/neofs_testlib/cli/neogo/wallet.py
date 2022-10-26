@@ -27,14 +27,13 @@ class NeoGoWallet(CliCommand):
             Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
-
+        exec_param = {
+            param: param_value for param, param_value in locals().items() if param not in ["self"]
+        }
+        exec_param["timeout"] = f"{timeout}s"
         return self._execute(
             "wallet claim",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
+            **exec_param,
         )
 
     def init(
@@ -293,14 +292,13 @@ class NeoGoWallet(CliCommand):
             Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
-
+        exec_param = {
+            param: param_value for param, param_value in locals().items() if param not in ["self"]
+        }
+        exec_param["timeout"] = f"{timeout}s"
         return self._execute(
             "wallet import-deployed",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
+            **exec_param,
         )
 
     def remove(
@@ -337,9 +335,10 @@ class NeoGoWallet(CliCommand):
         self,
         input_file: str,
         address: str,
-        rpc_endpoint: str,
+        rpc_endpoint: Optional[str] = None,
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
+        wallet_password: Optional[str] = None,
         out: Optional[str] = None,
         timeout: int = 10,
     ) -> CommandResult:
@@ -356,6 +355,7 @@ class NeoGoWallet(CliCommand):
             wallet: Target location of the wallet file ('-' to read from stdin);
                 conflicts with --wallet-config flag.
             wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            wallet_password: Wallet password.
             out: File to put JSON transaction to.
             input_file: File with JSON transaction.
             address: Address to use.
@@ -366,12 +366,16 @@ class NeoGoWallet(CliCommand):
             Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
+        exec_param = {
+            param: param_value
+            for param, param_value in locals().items()
+            if param not in ["self", "wallet_password"]
+        }
+        exec_param["timeout"] = f"{timeout}s"
+        if wallet_password is not None:
+            return self._execute_with_password("wallet sign", wallet_password, **exec_param)
 
-        return self._execute(
-            "wallet sign",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
-        )
+        if wallet_config:
+            return self._execute("wallet sign", **exec_param)
+
+        raise Exception(self.WALLET_PASSWD_ERROR_MSG)

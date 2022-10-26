@@ -24,7 +24,7 @@ class NeoGo:
     def __init__(
         self,
         shell: Shell,
-        neo_go_exec_path: Optional[str] = None,
+        neo_go_exec_path: str,
         config_path: Optional[str] = None,
     ):
         self.candidate = NeoGoCandidate(shell, neo_go_exec_path, config_path=config_path)

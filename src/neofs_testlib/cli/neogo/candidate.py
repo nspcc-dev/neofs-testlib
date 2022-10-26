@@ -11,6 +11,7 @@ class NeoGoCandidate(CliCommand):
         rpc_endpoint: str,
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
+        wallet_password: Optional[str] = None,
         gas: Optional[float] = None,
         timeout: int = 10,
     ) -> CommandResult:
@@ -21,6 +22,7 @@ class NeoGoCandidate(CliCommand):
             wallet: Target location of the wallet file ('-' to read from stdin);
                 conflicts with --wallet-config flag.
             wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            wallet_password: Wallet password.
             gas: Network fee to add to the transaction (prioritizing it).
             rpc_endpoint: RPC node address.
             timeout: Timeout for the operation (default: 10s).
@@ -29,15 +31,20 @@ class NeoGoCandidate(CliCommand):
             Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
+        exec_param = {
+            param: param_value
+            for param, param_value in locals().items()
+            if param not in ["self", "wallet_password"]
+        }
+        exec_param["timeout"] = f"{timeout}s"
+        if wallet_password is not None:
+            return self._execute_with_password(
+                "wallet candidate register", wallet_password, **exec_param
+            )
+        if wallet_config:
+            return self._execute("wallet candidate register", **exec_param)
 
-        return self._execute(
-            "wallet candidate register",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
-        )
+        raise Exception(self.WALLET_PASSWD_ERROR_MSG)
 
     def unregister(
         self,
@@ -45,6 +52,7 @@ class NeoGoCandidate(CliCommand):
         rpc_endpoint: str,
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
+        wallet_password: Optional[str] = None,
         gas: Optional[float] = None,
         timeout: int = 10,
     ) -> CommandResult:
@@ -55,6 +63,7 @@ class NeoGoCandidate(CliCommand):
             wallet: Target location of the wallet file ('-' to read from stdin);
                 conflicts with --wallet-config flag.
             wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            wallet_password: Wallet password.
             gas: Network fee to add to the transaction (prioritizing it).
             rpc_endpoint: RPC node address.
             timeout: Timeout for the operation (default: 10s).
@@ -63,22 +72,29 @@ class NeoGoCandidate(CliCommand):
             Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
+        exec_param = {
+            param: param_value
+            for param, param_value in locals().items()
+            if param not in ["self", "wallet_password"]
+        }
+        exec_param["timeout"] = f"{timeout}s"
+        if wallet_password is not None:
+            return self._execute_with_password(
+                "wallet candidate unregister", wallet_password, **exec_param
+            )
+        if wallet_config:
+            return self._execute("wallet candidate unregister", **exec_param)
 
-        return self._execute(
-            "wallet candidate unregister",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
-        )
+        raise Exception(self.WALLET_PASSWD_ERROR_MSG)
 
     def vote(
         self,
+        address: str,
         candidate: str,
         rpc_endpoint: str,
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
+        wallet_password: Optional[str] = None,
         gas: Optional[float] = None,
         timeout: int = 10,
     ) -> CommandResult:
@@ -88,10 +104,12 @@ class NeoGoCandidate(CliCommand):
         candidate argument to perform unvoting.
 
         Args:
+            address: Address to vote from
             candidate: Public key of candidate to vote for.
             wallet: Target location of the wallet file ('-' to read from stdin);
                 conflicts with --wallet-config flag.
             wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
+            wallet_password: Wallet password.
             gas: Network fee to add to the transaction (prioritizing it).
             rpc_endpoint: RPC node address.
             timeout: Timeout for the operation (default: 10s).
@@ -100,12 +118,17 @@ class NeoGoCandidate(CliCommand):
             Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
+        exec_param = {
+            param: param_value
+            for param, param_value in locals().items()
+            if param not in ["self", "wallet_password"]
+        }
+        exec_param["timeout"] = f"{timeout}s"
+        if wallet_password is not None:
+            return self._execute_with_password(
+                "wallet candidate vote", wallet_password, **exec_param
+            )
+        if wallet_config:
+            return self._execute("wallet candidate vote", **exec_param)
 
-        return self._execute(
-            "wallet candidate vote",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
-        )
+        raise Exception(self.WALLET_PASSWD_ERROR_MSG)
