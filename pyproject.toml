@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "neofs-testlib"
-version = "0.2.1"
+version = "0.2.2"
 description = "Building blocks and utilities to facilitate development of automated tests for NeoFS system"
 readme = "README.md"
 authors = [{ name = "NSPCC", email = "info@nspcc.ru" }]
@@ -47,7 +47,7 @@ line-length = 100
 target-version = ["py39"]
 
 [tool.bumpver]
-current_version = "0.2.1"
+current_version = "0.2.2"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message  = "Bump version {old_version} -> {new_version}"
 commit          = false
