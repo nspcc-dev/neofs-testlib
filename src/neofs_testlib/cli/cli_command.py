@@ -1,11 +1,12 @@
 from typing import Optional
 
-from neofs_testlib.shell import CommandResult, Shell
+from neofs_testlib.shell import CommandOptions, CommandResult, InteractiveInput, Shell
 
 
 class CliCommand:
 
     WALLET_SOURCE_ERROR_MSG = "Provide either wallet or wallet_config to specify wallet location"
+    WALLET_PASSWD_ERROR_MSG = "Provide either wallet_password or wallet_config to specify password"
 
     cli_exec_path: Optional[str] = None
     __base_params: Optional[str] = None
@@ -14,6 +15,8 @@ class CliCommand:
         "await_mode": "await",
         "hash_type": "hash",
         "doc_type": "type",
+        "to_address": "to",
+        "from_address": "from",
     }
 
     def __init__(self, shell: Shell, cli_exec_path: str, **base_params):
@@ -26,6 +29,9 @@ class CliCommand:
     def _format_command(self, command: str, **params) -> str:
         param_str = []
         for param, value in params.items():
+            if param == "post_data":
+                param_str.append(value)
+                continue
             if param in self.map_params.keys():
                 param = self.map_params[param]
             param = param.replace("_", "-")
@@ -56,3 +62,11 @@ class CliCommand:
 
     def _execute(self, command: Optional[str], **params) -> CommandResult:
         return self.shell.exec(self._format_command(command, **params))
+
+    def _execute_with_password(self, command: Optional[str], password, **params) -> CommandResult:
+        return self.shell.exec(
+            self._format_command(command, **params),
+            options=CommandOptions(
+                interactive_inputs=[InteractiveInput(prompt_pattern="assword", input=password)]
+            ),
+        )

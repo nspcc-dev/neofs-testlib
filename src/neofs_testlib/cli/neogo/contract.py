@@ -45,11 +45,12 @@ class NeoGoContract(CliCommand):
         self,
         address: str,
         input_file: str,
-        sysgas: float,
         manifest: str,
         rpc_endpoint: str,
+        sysgas: Optional[float] = None,
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
+        wallet_password: Optional[str] = None,
         gas: Optional[float] = None,
         out: Optional[str] = None,
         force: bool = False,
@@ -62,6 +63,7 @@ class NeoGoContract(CliCommand):
                 conflicts with wallet_config.
             wallet_config: Path to wallet config to use to get the key for transaction signing;
                 conflicts with wallet.
+            wallet_password: Wallet password.
             address: Address to use as transaction signee (and gas source).
             gas: Network fee to add to the transaction (prioritizing it).
             sysgas: System fee to add to transaction (compensating for execution).
@@ -77,15 +79,26 @@ class NeoGoContract(CliCommand):
             Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
+        exec_param = {
+            param: param_value
+            for param, param_value in locals().items()
+            if param not in ["self", "wallet_password"]
+        }
+        exec_param["timeout"] = f"{timeout}s"
 
-        return self._execute(
-            "contract deploy",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
-        )
+        if wallet_password is not None:
+            return self._execute_with_password(
+                "contract deploy",
+                wallet_password,
+                **exec_param,
+            )
+        if wallet_config:
+            return self._execute(
+                "contract deploy",
+                **exec_param,
+            )
+
+        raise Exception(self.WALLET_PASSWD_ERROR_MSG)
 
     def generate_wrapper(
         self,
@@ -116,13 +129,14 @@ class NeoGoContract(CliCommand):
 
     def invokefunction(
         self,
-        address: str,
         scripthash: str,
+        address: Optional[str] = None,
         wallet: Optional[str] = None,
         method: Optional[str] = None,
         arguments: Optional[str] = None,
         multisig_hash: Optional[str] = None,
         wallet_config: Optional[str] = None,
+        wallet_password: Optional[str] = None,
         gas: Optional[float] = None,
         sysgas: Optional[float] = None,
         out: Optional[str] = None,
@@ -147,6 +161,7 @@ class NeoGoContract(CliCommand):
                 conflicts with wallet_config.
             wallet_config: Path to wallet config to use to get the key for transaction signing;
                 conflicts with wallet.
+            wallet_password: Wallet password.
             address: Address to use as transaction signee (and gas source).
             gas: Network fee to add to the transaction (prioritizing it).
             sysgas: System fee to add to transaction (compensating for execution).
@@ -158,21 +173,40 @@ class NeoGoContract(CliCommand):
         Returns:
             Command's result.
         """
+
+        assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
+
         multisig_hash = f"-- {multisig_hash}" or ""
-        return self._execute(
-            "contract invokefunction "
-            f"{scripthash} {method or ''} {arguments or ''} {multisig_hash}",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self", "scripthash", "method", "arguments", "multisig_hash"]
-            },
-        )
+        post_data = f"{scripthash} {method or ''} {arguments or ''} {multisig_hash}"
+        exec_param = {
+            param: param_value
+            for param, param_value in locals().items()
+            if param
+            not in [
+                "self",
+                "scripthash",
+                "method",
+                "arguments",
+                "multisig_hash",
+                "wallet_password",
+            ]
+        }
+        exec_param["timeout"] = f"{timeout}s"
+        exec_param["post_data"] = post_data
+        if wallet_password is not None:
+            return self._execute_with_password(
+                "contract invokefunction", wallet_password, **exec_param
+            )
+        if wallet_config:
+            return self._execute("contract invokefunction", **exec_param)
+
+        raise Exception(self.WALLET_PASSWD_ERROR_MSG)
 
     def testinvokefunction(
         self,
         scripthash: str,
         wallet: Optional[str] = None,
+        wallet_password: Optional[str] = None,
         method: Optional[str] = None,
         arguments: Optional[str] = None,
         multisig_hash: Optional[str] = None,
@@ -192,6 +226,8 @@ class NeoGoContract(CliCommand):
 
         Args:
             scripthash: Function hash.
+            wallet: Wallet to use for testinvoke.
+            wallet_password: Wallet password.
             method: Call method.
             arguments: Method arguments.
             multisig_hash: Multisig hash.
@@ -201,16 +237,29 @@ class NeoGoContract(CliCommand):
         Returns:
             Command's result.
         """
-        multisig_hash = f"-- {multisig_hash}" or ""
-        return self._execute(
-            "contract testinvokefunction "
-            f"{scripthash} {method or ''} {arguments or ''} {multisig_hash}",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self", "scripthash", "method", "arguments", "multisig_hash"]
-            },
-        )
+        multisig_hash = f"-- {multisig_hash}" if multisig_hash else ""
+        post_data = f"{scripthash} {method or ''} {arguments or ''} {multisig_hash}"
+        exec_param = {
+            param: param_value
+            for param, param_value in locals().items()
+            if param
+            not in [
+                "self",
+                "scripthash",
+                "method",
+                "arguments",
+                "multisig_hash",
+                "wallet_password",
+            ]
+        }
+        exec_param["timeout"] = f"{timeout}s"
+        exec_param["post_data"] = post_data
+        if wallet_password is not None:
+            return self._execute_with_password(
+                "contract testinvokefunction", wallet_password, **exec_param
+            )
+
+        return self._execute("contract testinvokefunction", **exec_param)
 
     def testinvokescript(
         self,
@@ -231,13 +280,13 @@ class NeoGoContract(CliCommand):
         Returns:
             Command's result.
         """
+        exec_param = {
+            param: param_value for param, param_value in locals().items() if param not in ["self"]
+        }
+        exec_param["timeout"] = f"{timeout}s"
         return self._execute(
-            f"contract testinvokescript",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
+            "contract testinvokescript",
+            **exec_param,
         )
 
     def init(self, name: str, skip_details: bool = False) -> CommandResult:
@@ -313,14 +362,18 @@ class NeoGoContract(CliCommand):
         address: str,
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
+        wallet_password: Optional[str] = None,
         sender: Optional[str] = None,
         nef: Optional[str] = None,
     ) -> CommandResult:
         """Adds group to the manifest.
 
         Args:
-            wallet: Wallet to use to get the key for transaction signing; conflicts with wallet_config.
-            wallet_config: Path to wallet config to use to get the key for transaction signing; conflicts with wallet.
+            wallet: Wallet to use to get the key for transaction signing;
+                conflicts with wallet_config.
+            wallet_config: Path to wallet config to use to get the key for transaction signing;
+                conflicts with wallet.
+            wallet_password: Wallet password.
             sender: Deploy transaction sender.
             address: Account to sign group with.
             nef: Path to the NEF file.
@@ -329,11 +382,17 @@ class NeoGoContract(CliCommand):
         Returns:
             Command's result.
         """
-        return self._execute(
-            "contract manifest add-group",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
-        )
+        assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
+        exec_param = {
+            param: param_value
+            for param, param_value in locals().items()
+            if param not in ["self", "wallet_password"]
+        }
+        if wallet_password is not None:
+            return self._execute_with_password(
+                "contract manifest add-group", wallet_password, **exec_param
+            )
+        if wallet_config:
+            return self._execute("contract manifest add-group", **exec_param)
+
+        raise Exception(self.WALLET_PASSWD_ERROR_MSG)

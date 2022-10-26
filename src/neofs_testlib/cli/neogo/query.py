@@ -3,7 +3,7 @@ from neofs_testlib.shell import CommandResult
 
 
 class NeoGoQuery(CliCommand):
-    def candidates(self, rpc_endpoint: str, timeout: int = 10) -> CommandResult:
+    def candidates(self, rpc_endpoint: str, timeout: str = "10s") -> CommandResult:
         """Get candidates and votes.
 
         Args:
@@ -22,7 +22,7 @@ class NeoGoQuery(CliCommand):
             },
         )
 
-    def committee(self, rpc_endpoint: str, timeout: int = 10) -> CommandResult:
+    def committee(self, rpc_endpoint: str, timeout: str = "10s") -> CommandResult:
         """Get committee list.
 
         Args:
@@ -41,7 +41,7 @@ class NeoGoQuery(CliCommand):
             },
         )
 
-    def height(self, rpc_endpoint: str, timeout: int = 10) -> CommandResult:
+    def height(self, rpc_endpoint: str, timeout: str = "10s") -> CommandResult:
         """Get node height.
 
         Args:
@@ -60,7 +60,7 @@ class NeoGoQuery(CliCommand):
             },
         )
 
-    def tx(self, tx_hash: str, rpc_endpoint: str, timeout: int = 10) -> CommandResult:
+    def tx(self, tx_hash: str, rpc_endpoint: str, timeout: str = "10s") -> CommandResult:
         """Query transaction status.
 
         Args:
@@ -80,7 +80,7 @@ class NeoGoQuery(CliCommand):
             },
         )
 
-    def voter(self, rpc_endpoint: str, timeout: int = 10) -> CommandResult:
+    def voter(self, rpc_endpoint: str, timeout: str = "10s") -> CommandResult:
         """Print NEO holder account state.
 
         Args:
