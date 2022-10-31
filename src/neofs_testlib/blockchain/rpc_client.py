@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import requests
 
@@ -29,8 +29,8 @@ class RPCClient:
         self,
         sc_hash: str,
         function: str,
-        params: Optional[List] = None,
-        signers: Optional[List] = None,
+        params: Optional[list] = None,
+        signers: Optional[list] = None,
     ) -> Dict[str, Any]:
         return self._call_endpoint(
             "invokefunction", params=[sc_hash, function, params or [], signers or []]
@@ -75,6 +75,6 @@ class RPCClient:
             ) from exc
 
 
-def _build_payload(method, params: Optional[List] = None):
+def _build_payload(method, params: Optional[list] = None):
     payload = json.dumps({"jsonrpc": "2.0", "method": method, "params": params or [], "id": 1})
     return payload.replace("'", '"')

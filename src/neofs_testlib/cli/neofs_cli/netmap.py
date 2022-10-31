@@ -23,7 +23,7 @@ class NeofsCliNetmap(CliCommand):
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             ttl: TTL value in request meta header (default 2).
             wallet: Path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -81,7 +81,7 @@ class NeofsCliNetmap(CliCommand):
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             ttl: TTL value in request meta header (default 2).
             wallet: Path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -109,7 +109,7 @@ class NeofsCliNetmap(CliCommand):
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             ttl: TTL value in request meta header (default 2).
             wallet: Path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
