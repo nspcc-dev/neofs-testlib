@@ -1,6 +1,6 @@
 import json
 from time import sleep
-from typing import List, Optional
+from typing import Optional
 
 from cli import NeoGo
 from shell import Shell
@@ -24,7 +24,7 @@ class RoleDesignation:
     def set_notary_nodes(
         self,
         addr: str,
-        pubkeys: List[str],
+        pubkeys: list[str],
         script_hash: str,
         wallet: str,
         passwd: str,
@@ -47,7 +47,7 @@ class RoleDesignation:
     def set_inner_ring(
         self,
         addr: str,
-        pubkeys: List[str],
+        pubkeys: list[str],
         script_hash: str,
         wallet: str,
         passwd: str,
@@ -70,7 +70,7 @@ class RoleDesignation:
     def set_oracles(
         self,
         addr: str,
-        pubkeys: List[str],
+        pubkeys: list[str],
         script_hash: str,
         wallet: str,
         passwd: str,
@@ -92,10 +92,10 @@ class RoleDesignation:
 
     def set_notary_nodes_multisig_tx(
         self,
-        pubkeys: List[str],
+        pubkeys: list[str],
         script_hash: str,
-        wallets: List[str],
-        passwords: List[str],
+        wallets: list[str],
+        passwords: list[str],
         address: str,
         endpoint: str,
         invoke_tx_file: str,
@@ -118,10 +118,10 @@ class RoleDesignation:
 
     def set_inner_ring_multisig_tx(
         self,
-        pubkeys: List[str],
+        pubkeys: list[str],
         script_hash: str,
-        wallets: List[str],
-        passwords: List[str],
+        wallets: list[str],
+        passwords: list[str],
         address: str,
         endpoint: str,
         invoke_tx_file: str,
@@ -142,7 +142,7 @@ class RoleDesignation:
         )
         sleep(self.block_period)
 
-    def check_candidates(self, contract_hash: str, endpoint: str) -> Optional[List[str]]:
+    def check_candidates(self, contract_hash: str, endpoint: str) -> Optional[list[str]]:
         out = self.neogo.contract.testinvokefunction(
             scripthash=contract_hash,
             method="innerRingCandidates",

@@ -29,7 +29,7 @@ class NeofsCliObject(CliCommand):
             session: Path to a JSON-encoded container session token.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -71,7 +71,7 @@ class NeofsCliObject(CliCommand):
             session: Path to a JSON-encoded container session token.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -109,7 +109,7 @@ class NeofsCliObject(CliCommand):
             ttl: TTL value in request meta header (default 2).
             hash_type: Hash type. Either 'sha256' or 'tz' (default "sha256").
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -155,7 +155,7 @@ class NeofsCliObject(CliCommand):
             session: Path to a JSON-encoded container session token.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -191,7 +191,7 @@ class NeofsCliObject(CliCommand):
             session: Path to a JSON-encoded container session token.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -238,7 +238,7 @@ class NeofsCliObject(CliCommand):
             session: Path to a JSON-encoded container session token.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -280,7 +280,7 @@ class NeofsCliObject(CliCommand):
             session: Path to a JSON-encoded container session token.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -320,7 +320,7 @@ class NeofsCliObject(CliCommand):
             session: Path to a JSON-encoded container session token.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.

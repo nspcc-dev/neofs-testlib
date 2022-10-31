@@ -17,6 +17,8 @@ class CliCommand:
         "doc_type": "type",
         "to_address": "to",
         "from_address": "from",
+        "to_file": "to",
+        "from_file": "from",
     }
 
     def __init__(self, shell: Shell, cli_exec_path: str, **base_params):

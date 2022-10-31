@@ -1,5 +1,3 @@
-from typing import List
-
 from neofs_testlib.cli import NeoGo
 
 
@@ -14,8 +12,8 @@ class Multisig:
         contract_hash: str,
         contract_args: str,
         multisig_hash: str,
-        wallets: List[str],
-        passwords: List[str],
+        wallets: list[str],
+        passwords: list[str],
         address: str,
         endpoint: str,
     ) -> None:

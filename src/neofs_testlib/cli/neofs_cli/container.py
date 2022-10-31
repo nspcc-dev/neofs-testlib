@@ -42,7 +42,7 @@ class NeofsCliContainer(CliCommand):
             subnet: String representation of container subnetwork.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -77,7 +77,7 @@ class NeofsCliContainer(CliCommand):
             session: Path to a JSON-encoded container session token.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -112,7 +112,7 @@ class NeofsCliContainer(CliCommand):
             to: Path to dump encoded container.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -146,7 +146,7 @@ class NeofsCliContainer(CliCommand):
             session: Path to a JSON-encoded container session token.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -176,7 +176,7 @@ class NeofsCliContainer(CliCommand):
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -204,7 +204,7 @@ class NeofsCliContainer(CliCommand):
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
@@ -239,7 +239,7 @@ class NeofsCliContainer(CliCommand):
             table: Path to file with JSON or binary encoded EACL table.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            xhdr: Request X-Headers in form of Key=Value.
+            xhdr: Dict with request X-Headers.
 
         Returns:
             Command's result.
