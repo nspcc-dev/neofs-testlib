@@ -206,10 +206,10 @@ To update a version of the library, please, take the following steps:
     $ git commit --amend --signoff
     ```
 4. Push the changes to remote.
-5. After this commit is merged to upstream, create a tag on the master branch of upstream:
+5. After this commit is merged to upstream, create a tag on the master branch of upstream. Tag name should be formatted as "v{new_version}":
     ```shell
-    $ git tag <new_version>
-    $ git push upstream <new_version>
+    $ git tag v<new_version>
+    $ git push upstream v<new_version>
     ```
 
 ## Building and publishing package
