@@ -44,12 +44,14 @@ class CommandOptions:
         timeout: Timeout for command execution (in seconds).
         check: Controls whether to check return code of the command. Set to False to
             ignore non-zero return codes.
+        no_log: Do not print output to logger if True.
     """
 
     interactive_inputs: Optional[list[InteractiveInput]] = None
     close_stdin: bool = False
     timeout: int = 30
     check: bool = True
+    no_log: bool = False
 
 
 @dataclass

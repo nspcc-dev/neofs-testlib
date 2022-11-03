@@ -36,13 +36,15 @@ class HostIsNotAvailable(Exception):
 
 def log_command(func):
     @wraps(func)
-    def wrapper(shell: "SSHShell", command: str, *args, **kwargs) -> CommandResult:
+    def wrapper(
+        shell: "SSHShell", command: str, options: CommandOptions, *args, **kwargs
+    ) -> CommandResult:
         command_info = command.removeprefix("$ProgressPreference='SilentlyContinue'\n")
         with reporter.step(command_info):
             logger.info(f'Execute command "{command}" on "{shell.host}"')
 
             start_time = datetime.utcnow()
-            result = func(shell, command, *args, **kwargs)
+            result = func(shell, command, options, *args, **kwargs)
             end_time = datetime.utcnow()
 
             elapsed_time = end_time - start_time
@@ -55,7 +57,9 @@ def log_command(func):
                 f"Start / End / Elapsed\t {start_time.time()} / {end_time.time()} / {elapsed_time}"
             )
 
-            logger.info(log_message)
+            if not options.no_log:
+                logger.info(log_message)
+
             reporter.attach(log_message, "SSH command.txt")
         return result
 
