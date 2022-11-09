@@ -142,7 +142,9 @@ class SSHShell(Shell):
 
     @log_command
     def _exec_interactive(self, command: str, options: CommandOptions) -> CommandResult:
-        stdin, stdout, stderr = self._connection.exec_command(command, timeout=options.timeout)
+        stdin, stdout, stderr = self._connection.exec_command(
+            command, timeout=options.timeout, get_pty=True
+        )
         for interactive_input in options.interactive_inputs:
             input = interactive_input.input
             if not input.endswith("\n"):

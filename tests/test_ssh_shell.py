@@ -41,9 +41,8 @@ class TestSSHShellInteractive(TestCase):
             f'python3 -c "{script}"', CommandOptions(interactive_inputs=inputs)
         )
 
-        # TODO: we have inconsistency with local shell here, ssh does not echo input into stdout
         self.assertEqual(0, result.return_code)
-        self.assertEqual(["Password:", "test"], get_output_lines(result))
+        self.assertEqual(["Password: test", "test"], get_output_lines(result))
         self.assertEqual("", result.stderr)
 
     def test_command_with_several_prompts(self):
@@ -60,9 +59,10 @@ class TestSSHShellInteractive(TestCase):
             f'python3 -c "{script}"', CommandOptions(interactive_inputs=inputs)
         )
 
-        # TODO: we have inconsistency with local shell here, ssh does not echo input into stdout
         self.assertEqual(0, result.return_code)
-        self.assertEqual(["Input1:", "test1", "Input2:", "test2"], get_output_lines(result))
+        self.assertEqual(
+            ["Input1: test1", "test1", "Input2: test2", "test2"], get_output_lines(result)
+        )
         self.assertEqual("", result.stderr)
 
     def test_invalid_command_with_check(self):
@@ -73,7 +73,7 @@ class TestSSHShellInteractive(TestCase):
             self.shell.exec(f'python3 -c "{script}"', CommandOptions(interactive_inputs=inputs))
 
         error = format_error_details(raised.exception)
-        self.assertIn("Error", error)
+        self.assertIn("SyntaxError", error)
         self.assertIn("return code: 1", error)
 
     def test_invalid_command_without_check(self):
@@ -84,6 +84,7 @@ class TestSSHShellInteractive(TestCase):
             f'python3 -c "{script}"',
             CommandOptions(interactive_inputs=inputs, check=False),
         )
+        self.assertIn("SyntaxError", result.stdout)
         self.assertEqual(1, result.return_code)
 
     def test_non_existing_binary(self):
