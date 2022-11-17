@@ -148,7 +148,7 @@ class NeoGoWallet(CliCommand):
 
     def dump_keys(
         self,
-        address: str,
+        address: Optional[str] = None,
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
     ) -> CommandResult:
