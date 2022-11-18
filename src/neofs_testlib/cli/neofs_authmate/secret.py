@@ -8,6 +8,7 @@ class NeofsAuthmateSecret(CliCommand):
     def obtain(
         self,
         wallet: str,
+        wallet_password: str,
         peer: str,
         gate_wallet: str,
         access_key_id: str,
@@ -18,6 +19,7 @@ class NeofsAuthmateSecret(CliCommand):
 
         Args:
             wallet: Path to the wallet.
+            wallet_password: Wallet password.
             address: Address of wallet account.
             peer: Address of neofs peer to connect to.
             gate_wallet: Path to the wallet.
@@ -27,8 +29,9 @@ class NeofsAuthmateSecret(CliCommand):
         Returns:
             Command's result.
         """
-        return self._execute(
+        return self._execute_with_password(
             "obtain-secret",
+            wallet_password,
             **{
                 param: param_value
                 for param, param_value in locals().items()
@@ -39,6 +42,7 @@ class NeofsAuthmateSecret(CliCommand):
     def issue(
         self,
         wallet: str,
+        wallet_password: str,
         peer: str,
         bearer_rules: str,
         gate_public_key: str,
@@ -55,6 +59,7 @@ class NeofsAuthmateSecret(CliCommand):
 
         Args:
             wallet: Path to the wallet.
+            wallet_password: Wallet password.
             address: Address of wallet account.
             peer: Address of a neofs peer to connect to.
             bearer_rules: Rules for bearer token as plain json string.
@@ -75,8 +80,9 @@ class NeofsAuthmateSecret(CliCommand):
         Returns:
             Command's result.
         """
-        return self._execute(
+        return self._execute_with_password(
             "issue-secret",
+            wallet_password,
             **{
                 param: param_value
                 for param, param_value in locals().items()
