@@ -171,7 +171,8 @@ class NeofsCliObject(CliCommand):
         wallet: str,
         cid: str,
         oid: str,
-        lifetime: int,
+        lifetime: Optional[int] = None,
+        expire_at: Optional[int] = None,
         address: Optional[str] = None,
         bearer: Optional[str] = None,
         session: Optional[str] = None,
@@ -186,7 +187,8 @@ class NeofsCliObject(CliCommand):
             bearer: File with signed JSON or binary encoded bearer token.
             cid: Container ID.
             oid: Object ID.
-            lifetime: Object lifetime.
+            lifetime: Lock lifetime.
+            expire_at: Lock expiration epoch.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             session: Path to a JSON-encoded container session token.
             ttl: TTL value in request meta header (default 2).
