@@ -1,7 +1,7 @@
 from typing import Optional
 
 from neofs_testlib.cli.cli_command import CliCommand
-from neofs_testlib.shell import CommandResult
+from neofs_testlib.shell import CommandResult, CommandOptions, InteractiveInput
 
 
 class NeoGoWallet(CliCommand):
@@ -41,6 +41,7 @@ class NeoGoWallet(CliCommand):
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
         account: bool = False,
+        password: str = '',
     ) -> CommandResult:
         """Create a new wallet.
 
@@ -49,20 +50,37 @@ class NeoGoWallet(CliCommand):
                 conflicts with --wallet-config flag.
             wallet_config: Target location of the wallet config file; conflicts with --wallet flag.
             account: Create a new account.
+            password: Password for the new account.
 
         Returns:
             Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
-        return self._execute(
-            "wallet init",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
-        )
+        if account:
+            return self._execute(
+                "wallet init",
+                **{
+                    **{param: param_value
+                    for param, param_value in locals().items()
+                    if param not in ["self", "password"]},
+                    'options': CommandOptions(
+                        interactive_inputs=[
+                            InteractiveInput(prompt_pattern="account", input=''),
+                            InteractiveInput(prompt_pattern="password", input=password),
+                            InteractiveInput(prompt_pattern="password", input=password),
+                        ]),
+                },
+            )
+        else:
+            return self._execute(
+                "wallet init",
+                **{
+                    **{param: param_value
+                    for param, param_value in locals().items()
+                    if param not in ["self", "account", "password"]}
+                },
+            )
 
     def convert(
         self,
