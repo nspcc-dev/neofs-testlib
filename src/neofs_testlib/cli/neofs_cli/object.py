@@ -26,7 +26,7 @@ class NeofsCliObject(CliCommand):
             cid: Container ID.
             oid: Object ID.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
-            session: Path to a JSON-encoded container session token.
+            session: Filepath to a JSON- or binary-encoded token of the object DELETE session.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
             xhdr: Dict with request X-Headers.
@@ -68,7 +68,7 @@ class NeofsCliObject(CliCommand):
             oid: Object ID.
             raw: Set raw request option.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
-            session: Path to a JSON-encoded container session token.
+            session: Filepath to a JSON- or binary-encoded token of the object GET session.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
             xhdr: Dict with request X-Headers.
@@ -92,6 +92,7 @@ class NeofsCliObject(CliCommand):
         range: Optional[str] = None,
         salt: Optional[str] = None,
         ttl: Optional[int] = None,
+        session: Optional[str] = None,
         hash_type: Optional[str] = None,
         xhdr: Optional[dict] = None,
     ) -> CommandResult:
@@ -107,6 +108,7 @@ class NeofsCliObject(CliCommand):
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             salt: Salt in hex format.
             ttl: TTL value in request meta header (default 2).
+            session: Filepath to a JSON- or binary-encoded token of the object RANGEHASH session.
             hash_type: Hash type. Either 'sha256' or 'tz' (default "sha256").
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
             xhdr: Dict with request X-Headers.
@@ -152,7 +154,7 @@ class NeofsCliObject(CliCommand):
             proto: Marshal output in Protobuf.
             raw: Set raw request option.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
-            session: Path to a JSON-encoded container session token.
+            session: Filepath to a JSON- or binary-encoded token of the object HEAD session.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
             xhdr: Dict with request X-Headers.
@@ -190,7 +192,7 @@ class NeofsCliObject(CliCommand):
             lifetime: Lock lifetime.
             expire_at: Lock expiration epoch.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
-            session: Path to a JSON-encoded container session token.
+            session: Filepath to a JSON- or binary-encoded token of the object PUT session.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
             xhdr: Dict with request X-Headers.
@@ -237,7 +239,7 @@ class NeofsCliObject(CliCommand):
             notify: Object notification in the form of *epoch*:*topic*; '-'
                                 topic means using default.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
-            session: Path to a JSON-encoded container session token.
+            session: Filepath to a JSON- or binary-encoded token of the object PUT session.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
             xhdr: Dict with request X-Headers.
@@ -279,7 +281,7 @@ class NeofsCliObject(CliCommand):
             range: Range to take data from in the form offset:length.
             raw: Set raw request option.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
-            session: Path to a JSON-encoded container session token.
+            session: Filepath to a JSON- or binary-encoded token of the object RANGE session.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
             xhdr: Dict with request X-Headers.
@@ -319,7 +321,7 @@ class NeofsCliObject(CliCommand):
             phy: Search physically stored objects.
             root: Search for user objects.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
-            session: Path to a JSON-encoded container session token.
+            session: Filepath to a JSON- or binary-encoded token of the object SEARCH session.
             ttl: TTL value in request meta header (default 2).
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
             xhdr: Dict with request X-Headers.
