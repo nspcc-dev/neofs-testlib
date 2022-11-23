@@ -116,7 +116,7 @@ class DockerHost(Host):
             timeout=service_attributes.stop_timeout,
         )
 
-    def delete_storage_node_data(self, service_name: str) -> None:
+    def delete_storage_node_data(self, service_name: str, cache_only: bool = False) -> None:
         service_attributes = self._get_service_attributes(service_name)
 
         client = self._get_docker_client()
@@ -124,7 +124,8 @@ class DockerHost(Host):
         volume_path = volume_info["Mountpoint"]
 
         shell = self.get_shell()
-        shell.exec(f"rm -rf {volume_path}/*")
+        cmd = f"rm -rf {volume_path}/meta*" if cache_only else f"rm -rf {volume_path}/*"
+        shell.exec(cmd)
 
     def dump_logs(
         self,
