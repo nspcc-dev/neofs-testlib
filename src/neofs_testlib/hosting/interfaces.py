@@ -101,11 +101,12 @@ class Host(ABC):
         """
 
     @abstractmethod
-    def delete_storage_node_data(self, service_name: str) -> None:
+    def delete_storage_node_data(self, service_name: str, cache_only: bool = False) -> None:
         """Erases all data of the storage node with specified name.
 
         Args:
             service_name: Name of storage node service.
+            cache_only: To delete cache only.
         """
 
     @abstractmethod
