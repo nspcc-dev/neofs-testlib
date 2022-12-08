@@ -72,7 +72,7 @@ class TestLocalShellInteractive(TestCase):
             self.shell.exec("not-a-command", CommandOptions(interactive_inputs=inputs))
 
         error = format_error_details(exc.exception)
-        self.assertIn("return code: 127", error)
+        self.assertIn("The command was not found", error)
 
 
 class TestLocalShellNonInteractive(TestCase):

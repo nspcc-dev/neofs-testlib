@@ -35,52 +35,34 @@ class LocalShell(Shell):
     def _exec_interactive(self, command: str, options: CommandOptions) -> CommandResult:
         start_time = datetime.utcnow()
         log_file = tempfile.TemporaryFile()  # File is reliable cross-platform way to capture output
-        result = None
-        command_process = None
 
         try:
             command_process = pexpect.spawn(command, timeout=options.timeout)
-            command_process.delaybeforesend = 1
-            command_process.logfile_read = log_file
+        except (pexpect.ExceptionPexpect, OSError) as exc:
+            raise RuntimeError(f"Command: {command}") from exc
 
+        command_process.delaybeforesend = 1
+        command_process.logfile_read = log_file
+
+        try:
             for interactive_input in options.interactive_inputs:
                 command_process.expect(interactive_input.prompt_pattern)
                 command_process.sendline(interactive_input.input)
-
-            result = self._get_pexpect_process_result(command_process, command)
-            if options.check and result.return_code != 0:
-                raise RuntimeError(
-                    f"Command: {command}\nreturn code: {result.return_code}\nOutput: {result.stdout}"
-                )
-
-            return result
-        except pexpect.ExceptionPexpect as exc:
-            result = self._get_pexpect_process_result(command_process, command)
-            message = (
-                f"Command: {command}\nreturn code: {result.return_code}\nOutput: {result.stdout}"
-            )
+        except (pexpect.ExceptionPexpect, OSError) as exc:
             if options.check:
-                raise RuntimeError(message) from exc
-            else:
-                logger.exception(message)
-                return result
-        except OSError as exc:
-            result = self._get_pexpect_process_result(command_process, command)
-            message = (
-                f"Command: {command}\nreturn code: {result.return_code}\nOutput: {exc.strerror}"
-            )
-            if options.check:
-                raise RuntimeError(message) from exc
-            else:
-                logger.exception(message)
-                return result
-        except Exception:
-            result = self._get_pexpect_process_result(command_process, command)
-            raise
+                raise RuntimeError(f"Command: {command}") from exc
         finally:
+            result = self._get_pexpect_process_result(command_process)
             log_file.close()
             end_time = datetime.utcnow()
             self._report_command_result(command, start_time, end_time, result)
+
+        if options.check and result.return_code != 0:
+            raise RuntimeError(
+                f"Command: {command}\nreturn code: {result.return_code}\n"
+                f"Output: {result.stdout}"
+            )
+        return result
 
     def _exec_non_interactive(self, command: str, options: CommandOptions) -> CommandResult:
         start_time = datetime.utcnow()
@@ -99,13 +81,16 @@ class LocalShell(Shell):
 
             result = CommandResult(
                 stdout=command_process.stdout or "",
-                stderr=command_process.stderr or "",
+                stderr="",
                 return_code=command_process.returncode,
             )
-            return result
         except subprocess.CalledProcessError as exc:
             # TODO: always set check flag to false and capture command result normally
-            result = self._get_failing_command_result(command)
+            result = CommandResult(
+                stdout=exc.stdout or "",
+                stderr="",
+                return_code=exc.returncode,
+            )
             raise RuntimeError(
                 f"Command: {command}\nError:\n"
                 f"return code: {exc.returncode}\n"
@@ -113,29 +98,15 @@ class LocalShell(Shell):
             ) from exc
         except OSError as exc:
             raise RuntimeError(f"Command: {command}\nOutput: {exc.strerror}") from exc
-        except Exception as exc:
-            result = self._get_failing_command_result(command)
-            raise
         finally:
             end_time = datetime.utcnow()
             self._report_command_result(command, start_time, end_time, result)
+        return result
 
-    def _get_failing_command_result(self, command: str) -> CommandResult:
-        return_code, cmd_output = subprocess.getstatusoutput(command)
-        return CommandResult(stdout=cmd_output, stderr="", return_code=return_code)
-
-    def _get_pexpect_process_result(
-        self, command_process: Optional[pexpect.spawn], command: str
-    ) -> CommandResult:
-        """Captures output of the process.
-
-        If command process is not None, captures output of this process.
-        If command process is None, then command fails when we attempt to start it, in this case
-        we use regular non-interactive process to get it's output.
+    def _get_pexpect_process_result(self, command_process: pexpect.spawn) -> CommandResult:
         """
-        if command_process is None:
-            return self._get_failing_command_result(command)
-
+        Captures output of the process.
+        """
         # Wait for child process to end it's work
         if command_process.isalive():
             command_process.expect(pexpect.EOF)
