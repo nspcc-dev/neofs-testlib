@@ -207,6 +207,8 @@ class NeoGoWallet(CliCommand):
         wif: str,
         name: str,
         contract: str,
+        patterns: Optional[list] = None,
+        inputs: Optional[list] = None,
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
     ) -> CommandResult:
@@ -225,14 +227,25 @@ class NeoGoWallet(CliCommand):
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
-        return self._execute(
-            "wallet import",
-            **{
-                param: param_value
-                for param, param_value in locals().items()
-                if param not in ["self"]
-            },
-        )
+        if patterns and inputs:
+            assert len(patterns) == len(inputs), self.PATTERS_AND_INPUTS_ERROR_MSG
+            return self._execute_interactive(
+                command="wallet import", patterns=patterns, inputs=inputs,
+                **{
+                    param: param_value
+                    for param, param_value in locals().items()
+                    if param not in ["self", "patterns", "inputs"]
+                },
+            )
+        else:
+            return self._execute(
+                "wallet import",
+                **{
+                    param: param_value
+                    for param, param_value in locals().items()
+                    if param not in ["self"]
+                },
+            )
 
     def import_multisig(
         self,
