@@ -96,7 +96,7 @@ class LocalShell(Shell):
                 f"return code: {exc.returncode}\n"
                 f"output: {exc.output}"
             ) from exc
-        except OSError as exc:
+        except (OSError, subprocess.SubprocessError) as exc:
             raise RuntimeError(f"Command: {command}\nOutput: {exc.strerror}") from exc
         finally:
             end_time = datetime.utcnow()
