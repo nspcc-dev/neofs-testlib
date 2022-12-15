@@ -65,11 +65,10 @@ class CliCommand:
     def _execute(self, command: Optional[str], **params) -> CommandResult:
         return self.shell.exec(self._format_command(command, **params))
 
-    def _execute_interactive(self, patterns: list, inputs:list, command: Optional[str], **params) -> CommandResult:
+    def _execute_interactive(self, interactive_inputs: list, command: Optional[str], **params) -> CommandResult:
         return self.shell.exec(self._format_command(command, **params), options=CommandOptions(
-            interactive_inputs=[InteractiveInput(prompt_pattern=patterns[i], input=inputs[i]) for i in range(len(patterns))]
-                               ),
-                               )
+            interactive_inputs=interactive_inputs))
+
     def _execute_with_password(self, command: Optional[str], password, **params) -> CommandResult:
         return self.shell.exec(
             self._format_command(command, **params),
