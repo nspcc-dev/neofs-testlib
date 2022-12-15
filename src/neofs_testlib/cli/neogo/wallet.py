@@ -207,8 +207,7 @@ class NeoGoWallet(CliCommand):
         wif: str,
         name: str,
         contract: str,
-        patterns: Optional[list] = None,
-        inputs: Optional[list] = None,
+        interactive_inputs: Optional[list] = None,
         wallet: Optional[str] = None,
         wallet_config: Optional[str] = None,
     ) -> CommandResult:
@@ -221,16 +220,16 @@ class NeoGoWallet(CliCommand):
             wif: WIF to import.
             name: Optional account name.
             contract: Verification script for custom contracts.
+            interactive_inputs: interactive inputs for importing wif
 
         Returns:
             Command's result.
         """
         assert bool(wallet) ^ bool(wallet_config), self.WALLET_SOURCE_ERROR_MSG
 
-        if patterns and inputs:
-            assert len(patterns) == len(inputs), self.PATTERS_AND_INPUTS_ERROR_MSG
+        if interactive_inputs:
             return self._execute_interactive(
-                command="wallet import", patterns=patterns, inputs=inputs,
+                command="wallet import", interactive_inputs=interactive_inputs,
                 **{
                     param: param_value
                     for param, param_value in locals().items()
