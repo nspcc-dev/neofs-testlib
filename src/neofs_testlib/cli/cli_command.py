@@ -7,7 +7,7 @@ class CliCommand:
 
     WALLET_SOURCE_ERROR_MSG = "Provide either wallet or wallet_config to specify wallet location"
     WALLET_PASSWD_ERROR_MSG = "Provide either wallet_password or wallet_config to specify password"
-
+    PATTERS_AND_INPUTS_ERROR_MSG = "Provide same number of patters and inputs"
     cli_exec_path: Optional[str] = None
     __base_params: Optional[str] = None
     map_params = {
@@ -64,6 +64,10 @@ class CliCommand:
 
     def _execute(self, command: Optional[str], **params) -> CommandResult:
         return self.shell.exec(self._format_command(command, **params))
+
+    def _execute_interactive(self, interactive_inputs: list, command: Optional[str], **params) -> CommandResult:
+        return self.shell.exec(self._format_command(command, **params), options=CommandOptions(
+            interactive_inputs=interactive_inputs))
 
     def _execute_with_password(self, command: Optional[str], password, **params) -> CommandResult:
         return self.shell.exec(
