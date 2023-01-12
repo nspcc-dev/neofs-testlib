@@ -1,9 +1,13 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 from neofs_testlib.hosting.config import CLIConfig, HostConfig, ServiceConfig
 from neofs_testlib.shell.interfaces import Shell
+
+
+class DiskInfo(dict):
+    """Dict wrapper for disk_info for disk management commands."""
 
 
 class Host(ABC):
@@ -107,6 +111,40 @@ class Host(ABC):
         Args:
             service_name: Name of storage node service.
             cache_only: To delete cache only.
+        """
+
+    @abstractmethod
+    def detach_disk(self, device: str) -> DiskInfo:
+        """Detaches disk device to simulate disk offline/failover scenario.
+
+        Args:
+            device: Device name to detach
+
+        Returns:
+            internal service disk info related to host plugin (i.e. volume id for cloud devices),
+            which may be used to identify or re-attach existing volume back
+        """
+
+    @abstractmethod
+    def attach_disk(self, device: str, disk_info: DiskInfo) -> None:
+        """Attaches disk device back.
+
+        Args:
+            device: Device name to attach
+            service_info: any info required for host plugin to identify/attach disk
+        """
+
+    @abstractmethod
+    def is_disk_attached(self, device: str, disk_info: DiskInfo) -> bool:
+        """Checks if disk device is attached.
+
+        Args:
+            device: Device name to check
+            service_info: any info required for host plugin to identify disk
+
+        Returns:
+            True if attached
+            False if detached
         """
 
     @abstractmethod
