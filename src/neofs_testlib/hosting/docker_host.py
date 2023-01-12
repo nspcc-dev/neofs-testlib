@@ -10,7 +10,7 @@ import docker
 from requests import HTTPError
 
 from neofs_testlib.hosting.config import ParsedAttributes
-from neofs_testlib.hosting.interfaces import Host
+from neofs_testlib.hosting.interfaces import DiskInfo, Host
 from neofs_testlib.shell import LocalShell, Shell, SSHShell
 from neofs_testlib.shell.command_inspectors import SudoInspector
 
@@ -126,6 +126,15 @@ class DockerHost(Host):
         shell = self.get_shell()
         cmd = f"rm -rf {volume_path}/meta*" if cache_only else f"rm -rf {volume_path}/*"
         shell.exec(cmd)
+
+    def attach_disk(self, device: str, disk_info: DiskInfo) -> None:
+        raise NotImplementedError("Not supported for docker")
+
+    def detach_disk(self, device: str) -> DiskInfo:
+        raise NotImplementedError("Not supported for docker")
+
+    def is_disk_attached(self, device: str, disk_info: DiskInfo) -> bool:
+        raise NotImplementedError("Not supported for docker")
 
     def dump_logs(
         self,
