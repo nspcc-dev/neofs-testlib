@@ -124,7 +124,9 @@ class DockerHost(Host):
         volume_path = volume_info["Mountpoint"]
 
         shell = self.get_shell()
-        cmd = f"rm -rf {volume_path}/meta*" if cache_only else f"rm -rf {volume_path}/*"
+        meta_clean_cmd = f"rm -rf {volume_path}/meta*/*"
+        data_clean_cmd = f"; rm -rf {volume_path}/data*/*" if not cache_only else ""
+        cmd = f"{meta_clean_cmd}{data_clean_cmd}"
         shell.exec(cmd)
 
     def attach_disk(self, device: str, disk_info: DiskInfo) -> None:
