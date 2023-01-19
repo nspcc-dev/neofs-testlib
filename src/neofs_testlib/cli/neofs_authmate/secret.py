@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from neofs_testlib.cli.cli_command import CliCommand
 from neofs_testlib.shell import CommandResult
@@ -45,7 +45,7 @@ class NeofsAuthmateSecret(CliCommand):
         wallet_password: str,
         peer: str,
         bearer_rules: str,
-        gate_public_key: str,
+        gate_public_key: Union[str, list[str]],
         address: Optional[str] = None,
         container_id: Optional[str] = None,
         container_friendly_name: Optional[str] = None,
@@ -63,7 +63,7 @@ class NeofsAuthmateSecret(CliCommand):
             address: Address of wallet account.
             peer: Address of a neofs peer to connect to.
             bearer_rules: Rules for bearer token as plain json string.
-            gate_public_key: Public 256r1 key of a gate (use flags repeatedly for multiple gates).
+            gate_public_key: Public 256r1 key of a gate (send list[str] of keys to use multiple gates).
             container_id: Auth container id to put the secret into.
             container_friendly_name: Friendly name of auth container to put the secret into.
             container_placement_policy: Placement policy of auth container to put the secret into
