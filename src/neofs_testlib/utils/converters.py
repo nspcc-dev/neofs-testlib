@@ -3,7 +3,7 @@ import binascii
 import json
 
 import base58
-from neo3 import wallet as neo3_wallet
+from neo3.wallet import wallet as neo3_wallet
 
 
 def str_to_ascii_hex(input: str) -> str:
