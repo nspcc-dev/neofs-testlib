@@ -1,5 +1,6 @@
 # ignore IDE files
 .vscode
+.idea
 
 # ignore temp files under any path
 .DS_Store

@@ -3,7 +3,7 @@ import os
 from unittest import TestCase
 from uuid import uuid4
 
-from neo3.wallet import Wallet
+from neo3.wallet.wallet import Wallet
 
 from neofs_testlib.utils.wallet import init_wallet, get_last_address_from_wallet
 
