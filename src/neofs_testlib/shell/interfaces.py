@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 
+from neofs_testlib.defaults import Options
+
 
 @dataclass
 class InteractiveInput:
@@ -49,9 +51,13 @@ class CommandOptions:
 
     interactive_inputs: Optional[list[InteractiveInput]] = None
     close_stdin: bool = False
-    timeout: int = 30
+    timeout: Optional[int] = None
     check: bool = True
     no_log: bool = False
+
+    def __post_init__(self):
+        if self.timeout is None:
+            self.timeout = Options.get_default_shell_timeout()
 
 
 @dataclass
