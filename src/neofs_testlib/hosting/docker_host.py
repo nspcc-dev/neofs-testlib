@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -143,6 +144,7 @@ class DockerHost(Host):
         directory_path: str,
         since: Optional[datetime] = None,
         until: Optional[datetime] = None,
+        filter_regex: Optional[str] = None,
     ) -> None:
         client = self._get_docker_client()
         for service_config in self._config.services:
@@ -153,6 +155,12 @@ class DockerHost(Host):
                 logger.info(f"Got exception while dumping logs of '{container_name}': {exc}")
                 continue
 
+            if filter_regex:
+                logs = (
+                    "\n".join(match[0] for match in re.findall(filter_regex, logs, re.IGNORECASE))
+                    or f"No matches found in logs based on given filter '{filter_regex}'"
+                )
+
             # Save logs to the directory
             file_path = os.path.join(
                 directory_path,
@@ -160,6 +168,28 @@ class DockerHost(Host):
             )
             with open(file_path, "wb") as file:
                 file.write(logs)
+
+    def is_message_in_logs(
+        self,
+        message_regex: str,
+        since: Optional[datetime] = None,
+        until: Optional[datetime] = None,
+    ) -> bool:
+        client = self._get_docker_client()
+        for service_config in self._config.services:
+            container_name = self._get_service_attributes(service_config.name).container_name
+            try:
+                logs = client.logs(container_name, since=since, until=until)
+            except HTTPError as exc:
+                logger.info(f"Got exception while dumping logs of '{container_name}': {exc}")
+                continue
+
+            if message_regex:
+                matches = re.findall(message_regex, logs, re.IGNORECASE)
+                if matches:
+                    return True
+
+        return False
 
     def _get_service_attributes(self, service_name) -> ServiceAttributes:
         service_config = self.get_service_config(service_name)

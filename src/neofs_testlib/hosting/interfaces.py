@@ -118,11 +118,11 @@ class Host(ABC):
         """Detaches disk device to simulate disk offline/failover scenario.
 
         Args:
-            device: Device name to detach
+            device: Device name to detach.
 
         Returns:
             internal service disk info related to host plugin (i.e. volume id for cloud devices),
-            which may be used to identify or re-attach existing volume back
+            which may be used to identify or re-attach existing volume back.
         """
 
     @abstractmethod
@@ -130,8 +130,8 @@ class Host(ABC):
         """Attaches disk device back.
 
         Args:
-            device: Device name to attach
-            service_info: any info required for host plugin to identify/attach disk
+            device: Device name to attach.
+            service_info: any info required for host plugin to identify/attach disk.
         """
 
     @abstractmethod
@@ -139,12 +139,12 @@ class Host(ABC):
         """Checks if disk device is attached.
 
         Args:
-            device: Device name to check
-            service_info: any info required for host plugin to identify disk
+            device: Device name to check.
+            service_info: any info required for host plugin to identify disk.
 
         Returns:
-            True if attached
-            False if detached
+            True if attached.
+            False if detached.
         """
 
     @abstractmethod
@@ -153,6 +153,7 @@ class Host(ABC):
         directory_path: str,
         since: Optional[datetime] = None,
         until: Optional[datetime] = None,
+        filter_regex: Optional[str] = None,
     ) -> None:
         """Dumps logs of all services on the host to specified directory.
 
@@ -160,4 +161,24 @@ class Host(ABC):
             directory_path: Path to the directory where logs should be stored.
             since: If set, limits the time from which logs should be collected. Must be in UTC.
             until: If set, limits the time until which logs should be collected. Must be in UTC.
+            filter_regex: regex to filter output
+        """
+
+    @abstractmethod
+    def is_message_in_logs(
+        self,
+        message_regex: str,
+        since: Optional[datetime] = None,
+        until: Optional[datetime] = None,
+    ) -> bool:
+        """Checks logs on host for specified message regex.
+
+        Args:
+            message_regex: message to find.
+            since: If set, limits the time from which logs should be collected. Must be in UTC.
+            until: If set, limits the time until which logs should be collected. Must be in UTC.
+
+        Returns:
+            True if message found in logs in the given time frame.
+            False otherwise.
         """
