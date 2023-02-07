@@ -46,7 +46,7 @@ To setup development environment for `neofs-testlib`, please, take the following
 1. Prepare virtualenv
 
 ```shell
-$ virtualenv --python=python3.9 venv
+$ virtualenv --python=python3.10 venv
 $ source venv/bin/activate
 ```
 
