@@ -54,8 +54,8 @@ class ServiceAttributes(ParsedAttributes):
 
     container_name: str
     volume_name: Optional[str] = None
-    start_timeout: int = 60
-    stop_timeout: int = 60
+    start_timeout: int = 90
+    stop_timeout: int = 90
 
 
 class DockerHost(Host):
@@ -115,6 +115,18 @@ class DockerHost(Host):
             container_name=service_attributes.container_name,
             expected_state="exited",
             timeout=service_attributes.stop_timeout,
+        )
+
+    def restart_service(self, service_name: str) -> None:
+        service_attributes = self._get_service_attributes(service_name)
+
+        client = self._get_docker_client()
+        client.restart(service_attributes.container_name)
+
+        self._wait_for_container_to_be_in_state(
+            container_name=service_attributes.container_name,
+            expected_state="running",
+            timeout=service_attributes.start_timeout,
         )
 
     def delete_storage_node_data(self, service_name: str, cache_only: bool = False) -> None:

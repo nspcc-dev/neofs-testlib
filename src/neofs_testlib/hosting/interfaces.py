@@ -105,6 +105,14 @@ class Host(ABC):
         """
 
     @abstractmethod
+    def restart_service(self, service_name: str) -> None:
+        """Restarts the service with specified name and waits until it starts.
+        The service must be hosted on this host.
+        Args:
+            service_name: Name of the service to restart.
+        """
+
+    @abstractmethod
     def delete_storage_node_data(self, service_name: str, cache_only: bool = False) -> None:
         """Erases all data of the storage node with specified name.
 
