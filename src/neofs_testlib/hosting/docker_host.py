@@ -203,6 +203,14 @@ class DockerHost(Host):
 
         return False
 
+    def get_service_pid(self, service_name: str) -> str:
+        client = self._get_docker_client()
+        top_info = client.top(service_name)
+        pid_index = top_info['Titles'].index('PID')
+        # In the current configuration, only one service runs in each container
+        pid = top_info['Processes'][0][pid_index]
+        return pid
+
     def _get_service_attributes(self, service_name) -> ServiceAttributes:
         service_config = self.get_service_config(service_name)
         return ServiceAttributes.parse(service_config.attributes)

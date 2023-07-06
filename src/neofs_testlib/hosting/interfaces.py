@@ -190,3 +190,14 @@ class Host(ABC):
             True if message found in logs in the given time frame.
             False otherwise.
         """
+
+    @abstractmethod
+    def get_service_pid(self, service_name: str) -> str:
+        """Returns the PID of the specified neofs process.
+
+        Args:
+            service_name: service name.
+
+        Returns:
+            PID of the specified service.
+        """
