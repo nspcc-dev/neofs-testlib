@@ -3,7 +3,7 @@ from unittest import SkipTest, TestCase
 
 from neofs_testlib.shell.interfaces import CommandOptions, InteractiveInput
 from neofs_testlib.shell.ssh_shell import SSHShell
-from tests.helpers import format_error_details, get_output_lines
+from helpers import format_error_details, get_output_lines
 
 
 def init_shell() -> SSHShell:
