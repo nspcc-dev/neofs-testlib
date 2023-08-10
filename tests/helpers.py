@@ -14,11 +14,7 @@ def format_error_details(error: Exception) -> str:
     Returns:
         String containing exception details.
     """
-    detail_lines = traceback.format_exception(
-        etype=type(error),
-        value=error,
-        tb=error.__traceback__,
-    )
+    detail_lines = traceback.format_exception(error)
     return "".join(detail_lines)
 
 

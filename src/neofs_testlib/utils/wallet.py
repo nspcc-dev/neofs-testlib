@@ -32,7 +32,7 @@ def get_last_address_from_wallet(wallet_path: str, wallet_password: str):
         The address for the wallet.
     """
     with open(wallet_path) as wallet_file:
-        wallet = neo3_wallet.Wallet.from_json(json.load(wallet_file), password=wallet_password)
+        wallet = neo3_wallet.Wallet.from_json(json.load(wallet_file), passwords=[wallet_password])
     address = wallet.accounts[-1].address
     logger.info(f"got address: {address}")
     return address
