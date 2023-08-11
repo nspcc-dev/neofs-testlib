@@ -22,17 +22,26 @@ def init_wallet(wallet_path: str, wallet_password: str):
     logger.info(f"Init new wallet: {wallet_path}, address: {account.address}")
 
 
-def get_last_address_from_wallet(wallet_path: str, wallet_password: str):
+def get_last_address_from_wallet(
+    wallet_path: str, wallet_password: str | None = None, wallet_passwords: list[str] | None = None
+):
     """
     Extracting the last address from the given wallet.
     Args:
         wallet_path:  The path to the wallet to extract address from.
         wallet_password: The password for the given wallet.
+        wallet_passwords: The password list for the given accounts in the wallet
     Returns:
         The address for the wallet.
     """
+    if wallet_password is None and wallet_passwords is None:
+        raise ValueError("Either wallet_password or wallet_passwords should be specified")
+
     with open(wallet_path) as wallet_file:
-        wallet = neo3_wallet.Wallet.from_json(json.load(wallet_file), passwords=[wallet_password])
+        wallet_json = json.load(wallet_file)
+        if wallet_password is not None:
+            wallet_passwords = [wallet_password] * len(wallet_json["accounts"])
+        wallet = neo3_wallet.Wallet.from_json(wallet_json, passwords=wallet_passwords)
     address = wallet.accounts[-1].address
     logger.info(f"got address: {address}")
     return address
