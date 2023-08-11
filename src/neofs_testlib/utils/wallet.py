@@ -1,8 +1,8 @@
 import json
 import logging
 
-from neo3.wallet import wallet as neo3_wallet
 from neo3.wallet import account as neo3_account
+from neo3.wallet import wallet as neo3_wallet
 
 logger = logging.getLogger("neofs.testlib.utils")
 

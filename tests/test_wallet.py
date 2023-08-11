@@ -6,7 +6,7 @@ from uuid import uuid4
 from neo3.wallet import account as neo3_account
 from neo3.wallet.wallet import Wallet
 
-from neofs_testlib.utils.wallet import init_wallet, get_last_address_from_wallet
+from neofs_testlib.utils.wallet import get_last_address_from_wallet, init_wallet
 
 
 class TestWallet(TestCase):
