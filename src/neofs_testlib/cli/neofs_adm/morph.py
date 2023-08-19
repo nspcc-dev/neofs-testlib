@@ -127,7 +127,7 @@ class NeofsAdmMorph(CliCommand):
         )
 
     def force_new_epoch(
-        self, rpc_endpoint: Optional[str] = None, alphabet: Optional[str] = None
+        self, rpc_endpoint: Optional[str] = None, alphabet_wallets: Optional[str] = None
     ) -> CommandResult:
         """Create new NeoFS epoch event in the side chain.
 
