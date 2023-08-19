@@ -127,7 +127,7 @@ class NeofsAdmMorph(CliCommand):
         )
 
     def force_new_epoch(
-        self, rpc_endpoint: Optional[str] = None, alphabet: Optional[str] = None
+        self, rpc_endpoint: Optional[str] = None, alphabet_wallets: Optional[str] = None
     ) -> CommandResult:
         """Create new NeoFS epoch event in the side chain.
 
@@ -348,6 +348,26 @@ class NeofsAdmMorph(CliCommand):
         """
         return self._execute(
             "morph update-contracts",
+            **{
+                param: param_value
+                for param, param_value in locals().items()
+                if param not in ["self"]
+            },
+        )
+
+    def set_config(self, rpc_endpoint: str, alphabet_wallets: str, post_data: str) -> CommandResult:
+        """Set NeoFS config settings.
+
+        Args:
+            rpc_endpoint: N3 RPC node endpoint.
+            alphabet_wallets: Path to alphabet wallets dir.
+            post_data: Config key=value setting, e.g. HomomorphicHashingDisabled=true
+
+        Returns:
+            Command's result.
+        """
+        return self._execute(
+            "morph set-config",
             **{
                 param: param_value
                 for param, param_value in locals().items()
