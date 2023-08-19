@@ -354,3 +354,23 @@ class NeofsAdmMorph(CliCommand):
                 if param not in ["self"]
             },
         )
+
+    def set_config(self, rpc_endpoint: str, alphabet_wallets: str, post_data: str) -> CommandResult:
+        """Set NeoFS config settings.
+
+        Args:
+            rpc_endpoint: N3 RPC node endpoint.
+            alphabet_wallets: Path to alphabet wallets dir.
+            post_data: Config key=value setting, e.g. HomomorphicHashingDisabled=true
+
+        Returns:
+            Command's result.
+        """
+        return self._execute(
+            "morph set-config",
+            **{
+                param: param_value
+                for param, param_value in locals().items()
+                if param not in ["self"]
+            },
+        )
