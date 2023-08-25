@@ -9,7 +9,6 @@ class NeofsCliShards(CliCommand):
         self,
         endpoint: str,
         wallet: str,
-        wallet_password: str,
         id: Optional[list[str]],
         address: Optional[str] = None,
         all: bool = False,
@@ -23,14 +22,12 @@ class NeofsCliShards(CliCommand):
             all: Process all shards.
             endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            wallet_password: Wallet password.
 
         Returns:
             Command's result.
         """
-        return self._execute_with_password(
+        return self._execute(
             f"control shards flush-cache",
-            wallet_password,
             **{param: value for param, value in locals().items() if param not in ["self"]},
         )
 
@@ -38,7 +35,6 @@ class NeofsCliShards(CliCommand):
         self,
         endpoint: str,
         wallet: str,
-        wallet_password: str,
         mode: str,
         id: Optional[list[str]],
         address: Optional[str] = None,
@@ -56,18 +52,16 @@ class NeofsCliShards(CliCommand):
             clear_errors: Set shard error count to 0.
             endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            wallet_password: Wallet password.
 
         Returns:
             Command's result.
         """
-        return self._execute_with_password(
+        return self._execute(
             f"control shards set-mode",
-            wallet_password,
             **{
                 param: value
                 for param, value in locals().items()
-                if param not in ["self", "wallet_password"]
+                if param not in ["self"]
             },
         )
 
@@ -75,7 +69,6 @@ class NeofsCliShards(CliCommand):
         self,
         endpoint: str,
         wallet: str,
-        wallet_password: str,
         id: str,
         path: str,
         address: Optional[str] = None,
@@ -91,18 +84,16 @@ class NeofsCliShards(CliCommand):
             path: File to write objects to.
             endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            wallet_password: Wallet password.
 
         Returns:
             Command's result.
         """
-        return self._execute_with_password(
+        return self._execute(
             f"control shards dump",
-            wallet_password,
             **{
                 param: value
                 for param, value in locals().items()
-                if param not in ["self", "wallet_password"]
+                if param not in ["self"]
             },
         )
 
@@ -110,7 +101,6 @@ class NeofsCliShards(CliCommand):
         self,
         endpoint: str,
         wallet: str,
-        wallet_password: str,
         address: Optional[str] = None,
         json_mode: bool = False,
     ) -> CommandResult:
@@ -122,17 +112,15 @@ class NeofsCliShards(CliCommand):
             json_mode: Print shard info as a JSON array.
             endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
-            wallet_password: Wallet password.
 
         Returns:
             Command's result.
         """
-        return self._execute_with_password(
+        return self._execute(
             f"control shards list",
-            wallet_password,
             **{
                 param: value
                 for param, value in locals().items()
-                if param not in ["self", "wallet_password"]
+                if param not in ["self"]
             },
         )
