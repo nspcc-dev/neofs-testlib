@@ -5,7 +5,7 @@ import re
 import time
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import docker
 from requests import HTTPError
@@ -130,17 +130,14 @@ class DockerHost(Host):
         )
 
     def delete_storage_node_data(self, service_name: str, cache_only: bool = False) -> None:
-        service_attributes = self._get_service_attributes(service_name)
-
-        client = self._get_docker_client()
-        volume_info = client.inspect_volume(service_attributes.volume_name)
-        volume_path = volume_info["Mountpoint"]
-
-        shell = self.get_shell()
-        meta_clean_cmd = f"rm -rf {volume_path}/meta*/*"
-        data_clean_cmd = f"; rm -rf {volume_path}/data*/*" if not cache_only else ""
-        cmd = f"{meta_clean_cmd}{data_clean_cmd}"
-        shell.exec(cmd)
+        client = self._get_docker_client(api_client=False)
+        meta_files = 'meta0', 'meta1'
+        data_files = 'blobovnicza0', 'blobovnicza1', 'fstree0', 'fstree1', 'pilorama0', 'pilorama1'
+        for meta_file in meta_files:
+            client.containers.run('alpine', f'rm -rf /storage/{meta_file}', volumes_from=[service_name])
+        if not cache_only:
+            for data_file in data_files:
+                client.containers.run('alpine', f'rm -rf /storage/{data_file}', volumes_from=[service_name])
 
     def attach_disk(self, device: str, disk_info: DiskInfo) -> None:
         raise NotImplementedError("Not supported for docker")
@@ -215,15 +212,17 @@ class DockerHost(Host):
         service_config = self.get_service_config(service_name)
         return ServiceAttributes.parse(service_config.attributes)
 
-    def _get_docker_client(self) -> docker.APIClient:
+    def _get_docker_client(self, api_client=True) -> Union[docker.APIClient, docker.DockerClient]:
         docker_endpoint = HostAttributes.parse(self._config.attributes).docker_endpoint
+
+        client_type = docker.APIClient if api_client else docker.DockerClient
 
         if not docker_endpoint:
             # Use default docker client that talks to unix socket
-            return docker.APIClient()
+            return client_type()
 
         # Otherwise use docker client that talks to specified endpoint
-        return docker.APIClient(base_url=docker_endpoint)
+        return client_type(base_url=docker_endpoint)
 
     def _get_container_by_name(self, container_name: str) -> dict[str, Any]:
         client = self._get_docker_client()
