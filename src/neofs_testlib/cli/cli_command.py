@@ -19,6 +19,9 @@ class CliCommand:
         "from_address": "from",
         "to_file": "to",
         "from_file": "from",
+        "shard_id": "id",
+        "shards_id": "id",
+        "all_shards": "all",
     }
 
     def __init__(self, shell: Shell, cli_exec_path: str, **base_params):

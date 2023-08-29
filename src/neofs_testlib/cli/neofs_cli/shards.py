@@ -9,17 +9,17 @@ class NeofsCliShards(CliCommand):
         self,
         endpoint: str,
         wallet: str,
-        id: Optional[list[str]],
+        shards_id: Optional[list[str]],
         address: Optional[str] = None,
-        all: bool = False,
+        all_shards: bool = False,
     ) -> CommandResult:
         """
         Flush objects from the write-cache to the main storage.
 
         Args:
             address: Address of wallet account.
-            id: List of shard IDs in base58 encoding.
-            all: Process all shards.
+            shards_id: List of shard IDs in base58 encoding.
+            all_shards: Process all shards.
             endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
 
@@ -36,9 +36,9 @@ class NeofsCliShards(CliCommand):
         endpoint: str,
         wallet: str,
         mode: str,
-        id: Optional[list[str]],
+        shards_id: Optional[list[str]],
         address: Optional[str] = None,
-        all: bool = False,
+        all_shards: bool = False,
         clear_errors: bool = False,
     ) -> CommandResult:
         """
@@ -46,9 +46,9 @@ class NeofsCliShards(CliCommand):
 
         Args:
             address: Address of wallet account.
-            id: List of shard IDs in base58 encoding.
+            shards_id: List of shard IDs in base58 encoding.
             mode: New shard mode ('degraded-read-only', 'read-only', 'read-write').
-            all: Process all shards.
+            all_shards: Process all shards.
             clear_errors: Set shard error count to 0.
             endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
@@ -69,7 +69,7 @@ class NeofsCliShards(CliCommand):
         self,
         endpoint: str,
         wallet: str,
-        id: str,
+        shard_id: str,
         path: str,
         address: Optional[str] = None,
         no_errors: bool = False,
@@ -80,7 +80,7 @@ class NeofsCliShards(CliCommand):
         Args:
             address: Address of wallet account.
             no_errors: Skip invalid/unreadable objects.
-            id: Shard ID in base58 encoding.
+            shard_id: Shard ID in base58 encoding.
             path: File to write objects to.
             endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
