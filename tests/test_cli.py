@@ -27,6 +27,10 @@ class TestCli(TestCase):
     policy = "policy1"
     timeout = 20
     xhdr = {"param1": "value1", "param2": "value2"}
+    shards_id = ["123", "2", "3"]
+    degraded_mode = "degraded - read - only"
+    path_to_objects = "path/to/objects"
+    shard_id = "123"
 
     def test_container_create(self):
         shell = Mock()
@@ -172,3 +176,143 @@ class TestCli(TestCase):
         neofs_adm.version.get()
 
         shell.exec.assert_called_once_with(f"{self.neofs_adm_exec_path}   --version")
+
+    def test_shards_flush_cache(self):
+        shell = Mock()
+
+        neofs_cli = NeofsCli(
+            config_file=self.config_file,
+            neofs_cli_exec_path=self.neofs_cli_exec_path,
+            shell=shell,
+        )
+
+        neofs_cli.shards.flush_cache(
+            endpoint=self.rpc_endpoint,
+            wallet=self.wallet,
+            shards_id=self.shards_id,
+        )
+
+        expected_command = (
+            f"{self.neofs_cli_exec_path} --config {self.config_file} control shards flush-cache "
+            f"--endpoint '{self.rpc_endpoint}' --wallet '{self.wallet}' "
+            f"--id '{self.shards_id[0]}' --id '{self.shards_id[1]}' --id '{self.shards_id[2]}'"
+        )
+
+        shell.exec.assert_called_once_with(expected_command)
+
+    def test_shards_set_mode(self):
+        shell = Mock()
+
+        neofs_cli = NeofsCli(
+            config_file=self.config_file,
+            neofs_cli_exec_path=self.neofs_cli_exec_path,
+            shell=shell,
+        )
+
+        neofs_cli.shards.set_mode(
+            endpoint=self.rpc_endpoint,
+            wallet=self.wallet,
+            mode=self.degraded_mode,
+            shards_id=self.shards_id,
+        )
+
+        expected_command = (
+            f"{self.neofs_cli_exec_path} --config {self.config_file} control shards set-mode "
+            f"--endpoint '{self.rpc_endpoint}' --wallet '{self.wallet}' --mode '{self.degraded_mode}' "
+            f"--id '{self.shards_id[0]}' --id '{self.shards_id[1]}' --id '{self.shards_id[2]}'"
+        )
+
+        shell.exec.assert_called_once_with(expected_command)
+
+    def test_shards_dump(self):
+        shell = Mock()
+
+        neofs_cli = NeofsCli(
+            config_file=self.config_file,
+            neofs_cli_exec_path=self.neofs_cli_exec_path,
+            shell=shell,
+        )
+
+        neofs_cli.shards.dump(
+            endpoint=self.rpc_endpoint,
+            wallet=self.wallet,
+            path=self.path_to_objects,
+            shard_id=self.shard_id,
+        )
+
+        expected_command = (
+            f"{self.neofs_cli_exec_path} --config {self.config_file} control shards dump "
+            f"--endpoint '{self.rpc_endpoint}' --wallet '{self.wallet}' --id '{self.shard_id}' "
+            f"--path '{self.path_to_objects}'"
+        )
+
+        shell.exec.assert_called_once_with(expected_command)
+
+    def test_shards_list(self):
+        shell = Mock()
+
+        neofs_cli = NeofsCli(
+            config_file=self.config_file,
+            neofs_cli_exec_path=self.neofs_cli_exec_path,
+            shell=shell,
+        )
+
+        neofs_cli.shards.list(
+            endpoint=self.rpc_endpoint,
+            wallet=self.wallet,
+            address=self.address,
+        )
+
+        expected_command = (
+            f"{self.neofs_cli_exec_path} --config {self.config_file} control shards list "
+            f"--endpoint '{self.rpc_endpoint}' --wallet '{self.wallet}' --address '{self.address}'"
+        )
+
+        shell.exec.assert_called_once_with(expected_command)
+
+    def test_shards_evacuate(self):
+        shell = Mock()
+
+        neofs_cli = NeofsCli(
+            config_file=self.config_file,
+            neofs_cli_exec_path=self.neofs_cli_exec_path,
+            shell=shell,
+        )
+
+        neofs_cli.shards.evacuate(
+            endpoint=self.rpc_endpoint,
+            wallet=self.wallet,
+            shards_id=self.shards_id,
+        )
+
+        expected_command = (
+            f"{self.neofs_cli_exec_path} --config {self.config_file} control shards evacuate "
+            f"--endpoint '{self.rpc_endpoint}' --wallet '{self.wallet}' "
+            f"--id '{self.shards_id[0]}' --id '{self.shards_id[1]}' --id '{self.shards_id[2]}'"
+        )
+
+        shell.exec.assert_called_once_with(expected_command)
+
+    def test_shards_restore(self):
+        shell = Mock()
+
+        neofs_cli = NeofsCli(
+            config_file=self.config_file,
+            neofs_cli_exec_path=self.neofs_cli_exec_path,
+            shell=shell,
+        )
+
+        neofs_cli.shards.restore(
+            endpoint=self.rpc_endpoint,
+            wallet=self.wallet,
+            shard_id=self.shard_id,
+            path=self.path_to_objects,
+        )
+
+        expected_command = (
+            f"{self.neofs_cli_exec_path} --config {self.config_file} control shards restore "
+            f"--endpoint '{self.rpc_endpoint}' --wallet '{self.wallet}' --id '{self.shard_id}' "
+            f"--path '{self.path_to_objects}'"
+        )
+
+        shell.exec.assert_called_once_with(expected_command)
