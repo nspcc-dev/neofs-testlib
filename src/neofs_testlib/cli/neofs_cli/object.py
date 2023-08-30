@@ -198,8 +198,8 @@ class NeofsCliObject(CliCommand):
             bearer: File with signed JSON or binary encoded bearer token.
             cid: Container ID.
             oid: Object ID.
-            lifetime: Lock lifetime.
-            expire_at: Lock expiration epoch.
+            lifetime: Lock lifetime - relative to the current epoch.
+            expire_at: Last epoch in the life of the object - absolute value.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             session: Filepath to a JSON- or binary-encoded token of the object PUT session.
             ttl: TTL value in request meta header (default 2).
@@ -226,6 +226,7 @@ class NeofsCliObject(CliCommand):
         bearer: Optional[str] = None,
         disable_filename: bool = False,
         disable_timestamp: bool = False,
+        lifetime: Optional[int] = None,
         expire_at: Optional[int] = None,
         no_progress: bool = False,
         notify: Optional[str] = None,
@@ -244,7 +245,8 @@ class NeofsCliObject(CliCommand):
             cid: Container ID.
             disable_filename: Do not set well-known filename attribute.
             disable_timestamp: Do not set well-known timestamp attribute.
-            expire_at: Last epoch in the life of the object.
+            lifetime: Lock lifetime - relative to the current epoch.
+            expire_at: Last epoch in the life of the object - absolute value.
             file: File with object payload.
             no_progress: Do not show progress bar.
             notify: Object notification in the form of *epoch*:*topic*; '-'
