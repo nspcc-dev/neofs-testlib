@@ -14,6 +14,7 @@ class NeofsCliStorageGroup(CliCommand):
         ttl: Optional[int] = None,
         bearer: Optional[str] = None,
         lifetime: Optional[int] = None,
+        expire_at: Optional[int] = None,
         address: Optional[str] = None,
         xhdr: Optional[dict] = None,
     ) -> CommandResult:
@@ -25,7 +26,8 @@ class NeofsCliStorageGroup(CliCommand):
             bearer: File with signed JSON or binary encoded bearer token.
             cid: Container ID.
             members: ID list of storage group members.
-            lifetime: Storage group lifetime in epochs.
+            lifetime: Storage group lifetime in epochs - relative to the current epoch.
+            expire_at: Last epoch in the life of the storage group - absolute value.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             ttl: TTL value in request meta header.
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
@@ -49,7 +51,6 @@ class NeofsCliStorageGroup(CliCommand):
         raw: Optional[bool] = False,
         ttl: Optional[int] = None,
         bearer: Optional[str] = None,
-        lifetime: Optional[int] = None,
         address: Optional[str] = None,
         xhdr: Optional[dict] = None,
     ) -> CommandResult:
@@ -62,7 +63,6 @@ class NeofsCliStorageGroup(CliCommand):
             cid: Container ID.
             id: Storage group identifier.
             raw: Set raw request option.
-            lifetime: Storage group lifetime in epochs.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             ttl: TTL value in request meta header.
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
@@ -84,7 +84,6 @@ class NeofsCliStorageGroup(CliCommand):
         raw: Optional[bool] = False,
         ttl: Optional[int] = None,
         bearer: Optional[str] = None,
-        lifetime: Optional[int] = None,
         address: Optional[str] = None,
         xhdr: Optional[dict] = None,
     ) -> CommandResult:
@@ -96,7 +95,6 @@ class NeofsCliStorageGroup(CliCommand):
             bearer: File with signed JSON or binary encoded bearer token.
             cid: Container ID.
             raw: Set raw request option.
-            lifetime: Storage group lifetime in epochs.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             ttl: TTL value in request meta header.
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
@@ -119,7 +117,6 @@ class NeofsCliStorageGroup(CliCommand):
         raw: Optional[bool] = False,
         ttl: Optional[int] = None,
         bearer: Optional[str] = None,
-        lifetime: Optional[int] = None,
         address: Optional[str] = None,
         xhdr: Optional[dict] = None,
     ) -> CommandResult:
@@ -132,7 +129,6 @@ class NeofsCliStorageGroup(CliCommand):
             cid: Container ID.
             id: Storage group identifier.
             raw: Set raw request option.
-            lifetime: Storage group lifetime in epochs.
             rpc_endpoint: Remote node address (as 'multiaddr' or '<host>:<port>').
             ttl: TTL value in request meta header.
             wallet: WIF (NEP-2) string or path to the wallet or binary key.

@@ -12,6 +12,7 @@ class NeofsCliSession(CliCommand):
         wallet_password: str,
         out: str,
         lifetime: Optional[int] = None,
+        expire_at: Optional[int] = None,
         address: Optional[str] = None,
         json: Optional[bool] = False,
     ) -> CommandResult:
@@ -21,7 +22,8 @@ class NeofsCliSession(CliCommand):
         Args:
             address: Address of wallet account.
             out: File to write session token to.
-            lifetime: Number of epochs for token to stay valid.
+            lifetime: Number of epochs for token to stay valid - relative to the current epoch.
+            expire_at: Last epoch in the life of the token - absolute value.
             json: Output token in JSON.
             wallet: WIF (NEP-2) string or path to the wallet or binary key.
             wallet_password: Wallet password.
