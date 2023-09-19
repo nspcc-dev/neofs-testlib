@@ -108,11 +108,12 @@ class NeofsAdmMorph(CliCommand):
             },
         )
 
-    def dump_hashes(self, rpc_endpoint: str) -> CommandResult:
+    def dump_hashes(self, rpc_endpoint: str, domain: str) -> CommandResult:
         """Dump deployed contract hashes.
 
         Args:
             rpc_endpoint: N3 RPC node endpoint.
+            domain: Custom zone for NNS.
 
         Returns:
             Command's result.
