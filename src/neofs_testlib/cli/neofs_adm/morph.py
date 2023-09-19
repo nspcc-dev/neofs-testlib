@@ -374,3 +374,34 @@ class NeofsAdmMorph(CliCommand):
                 if param not in ["self"]
             },
         )
+
+    def deploy(
+        self,
+        rpc_endpoint: str,
+        alphabet_wallets: str,
+        domain: str,
+        contract: str,
+        post_data: str,
+        update=False,
+    ) -> CommandResult:
+        """Deploy additional smart-contracts
+
+        Args:
+            rpc_endpoint: N3 RPC node endpoint.
+            alphabet_wallets: Path to alphabet wallets dir.
+            domain: Custom zone for NNS.
+            contract: Path to the contract directory.
+            post_data: Arguments passed to a deploying smart contract.
+            update: Update an existing contract.
+
+        Returns:
+            Command's result.
+        """
+        return self._execute(
+            "morph deploy",
+            **{
+                param: param_value
+                for param, param_value in locals().items()
+                if param not in ["self"]
+            },
+        )
