@@ -5,9 +5,9 @@ from neofs_testlib.shell import CommandResult
 
 
 class NeoGoContract(CliCommand):
-    def compile(
+    def contract_compile(
         self,
-        input_file: str,
+        i: str,
         out: str,
         manifest: str,
         config: str,
@@ -19,7 +19,7 @@ class NeoGoContract(CliCommand):
         """Compile a smart contract to a .nef file.
 
         Args:
-            input_file: Input file for the smart contract to be compiled.
+            i: Input file for the smart contract to be compiled.
             out: Output of the compiled contract.
             manifest: Emit contract manifest (*.manifest.json) file into separate file using
                 configuration input file (*.yml).
