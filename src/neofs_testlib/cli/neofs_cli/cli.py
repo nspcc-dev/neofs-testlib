@@ -4,6 +4,7 @@ from neofs_testlib.cli.neofs_cli.accounting import NeofsCliAccounting
 from neofs_testlib.cli.neofs_cli.acl import NeofsCliACL
 from neofs_testlib.cli.neofs_cli.bearer import NeofsCliBearer
 from neofs_testlib.cli.neofs_cli.container import NeofsCliContainer
+from neofs_testlib.cli.neofs_cli.control import NeofsCliControl
 from neofs_testlib.cli.neofs_cli.netmap import NeofsCliNetmap
 from neofs_testlib.cli.neofs_cli.object import NeofsCliObject
 from neofs_testlib.cli.neofs_cli.session import NeofsCliSession
@@ -26,6 +27,7 @@ class NeofsCli:
     storagegroup: Optional[NeofsCliStorageGroup] = None
     util: Optional[NeofsCliUtil] = None
     version: Optional[NeofsCliVersion] = None
+    control: Optional[NeofsCliControl] = None
 
     def __init__(self, shell: Shell, neofs_cli_exec_path: str, config_file: Optional[str] = None):
         self.accounting = NeofsCliAccounting(shell, neofs_cli_exec_path, config=config_file)
@@ -39,3 +41,4 @@ class NeofsCli:
         self.storagegroup = NeofsCliStorageGroup(shell, neofs_cli_exec_path, config=config_file)
         self.util = NeofsCliUtil(shell, neofs_cli_exec_path, config=config_file)
         self.version = NeofsCliVersion(shell, neofs_cli_exec_path, config=config_file)
+        self.control = NeofsCliControl(shell, neofs_cli_exec_path, config=config_file)
