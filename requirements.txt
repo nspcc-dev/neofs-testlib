@@ -5,6 +5,11 @@ neo-mamba==2.3.0
 paramiko==2.10.3
 pexpect==4.8.0
 requests==2.31.0
+tenacity
+jinja2
+pyyaml
+pytest
+boto3
 
 # Dev dependencies
 black==22.8.0

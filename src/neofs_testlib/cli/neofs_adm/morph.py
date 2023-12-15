@@ -150,7 +150,6 @@ class NeofsAdmMorph(CliCommand):
 
     def generate_alphabet(
         self,
-        rpc_endpoint: str,
         alphabet_wallets: str,
         size: int = 7,
     ) -> CommandResult:
@@ -159,7 +158,6 @@ class NeofsAdmMorph(CliCommand):
         Args:
             alphabet_wallets: Path to alphabet wallets dir.
             size: Amount of alphabet wallets to generate (default 7).
-            rpc_endpoint: N3 RPC node endpoint.
 
         Returns:
             Command's result.
@@ -175,9 +173,9 @@ class NeofsAdmMorph(CliCommand):
 
     def generate_storage_wallet(
         self,
-        rpc_endpoint: str,
         alphabet_wallets: str,
         storage_wallet: str,
+        label: str,
         initial_gas: Optional[str] = None,
     ) -> CommandResult:
         """Generate storage node wallet for the morph network.
@@ -185,8 +183,8 @@ class NeofsAdmMorph(CliCommand):
         Args:
             alphabet_wallets: Path to alphabet wallets dir.
             initial_gas: Initial amount of GAS to transfer.
-            rpc_endpoint: N3 RPC node endpoint.
             storage_wallet: Path to new storage node wallet.
+            label: Wallet label.
 
         Returns:
             Command's result.
