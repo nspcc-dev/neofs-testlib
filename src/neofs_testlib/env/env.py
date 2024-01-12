@@ -6,6 +6,7 @@ import random
 import socket
 import string
 import subprocess
+import threading
 from dataclasses import dataclass
 from enum import Enum
 from importlib.resources import files
@@ -108,18 +109,30 @@ class NeoFSEnv:
         self.inner_ring_nodes.append(new_inner_ring_node)
 
     @allure.step("Deploy storage node")
-    def deploy_storage_node(self):
-        new_storage_node = StorageNode(self)
-        new_storage_node.start()
-        self.storage_nodes.append(new_storage_node)
+    def deploy_storage_nodes(self, count=1):
+        logger.info(f"Going to deploy {count} storage nodes")
+        deploy_threads = []
+        for _ in range(count):
+            new_storage_node = StorageNode(self)
+            self.storage_nodes.append(new_storage_node)
+            deploy_threads.append(
+                threading.Thread(target=new_storage_node.start, args=(len(self.storage_nodes),))
+            )
+        for t in deploy_threads:
+            t.start()
+        logger.info(f"Wait until storage nodes are deployed")
+        for t in deploy_threads:
+            t.join()
 
     @allure.step("Deploy s3 gateway")
     def deploy_s3_gw(self):
         self.s3_gw = S3_GW(self)
         self.s3_gw.start()
 
-    def get_next_sn_number(self):
-        return len(self.storage_nodes) + 1
+    @allure.step("Deploy http gateway")
+    def deploy_http_gw(self):
+        self.http_gw = HTTP_GW(self)
+        self.http_gw.start()
 
     @allure.step("Generate wallet")
     def generate_wallet(
@@ -162,6 +175,7 @@ class NeoFSEnv:
 
     @allure.step("Kill current neofs env")
     def kill(self):
+        self.http_gw.process.kill()
         self.s3_gw.process.kill()
         for sn in self.storage_nodes:
             sn.process.kill()
@@ -184,8 +198,9 @@ class NeoFSEnv:
     def simple(cls) -> "NeoFSEnv":
         neofs_env = NeoFSEnv()
         neofs_env.deploy_inner_ring_node()
-        neofs_env.deploy_storage_node()
+        neofs_env.deploy_storage_nodes(count=4)
         neofs_env.deploy_s3_gw()
+        neofs_env.deploy_http_gw()
         return neofs_env
 
     @staticmethod
@@ -360,11 +375,9 @@ class StorageNode:
         del attributes["process"]
         return attributes
 
-    def start(self):
+    def start(self, sn_number):
         logger.info(f"Generating wallet for storage node")
-        self.neofs_env.generate_wallet(
-            WalletType.STORAGE, self.wallet, label=f"sn{self.neofs_env.get_next_sn_number()}"
-        )
+        self.neofs_env.generate_wallet(WalletType.STORAGE, self.wallet, label=f"sn{sn_number}")
         logger.info(f"Generating config for storage node at {self.storage_node_config_path}")
         NeoFSEnv.generate_config_file(
             config_template="sn.yaml",
@@ -483,4 +496,66 @@ class S3_GW:
             stdout=stdout_fp,
             stderr=stderr_fp,
             env=s3_gw_env,
+        )
+
+
+class HTTP_GW:
+    def __init__(self, neofs_env: NeoFSEnv):
+        self.neofs_env = neofs_env
+        self.config_path = NeoFSEnv._generate_temp_file(extension="yml")
+        self.wallet = NodeWallet(
+            path=NeoFSEnv._generate_temp_file(),
+            address="",
+            password=self.neofs_env.default_password,
+        )
+        self.address = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
+        self.stdout = NeoFSEnv._generate_temp_file()
+        self.stderr = NeoFSEnv._generate_temp_file()
+        self.process = None
+
+    def __str__(self):
+        return f"""
+            HTTP Gateway:
+            - Address: {self.address}
+            - HTTP GW Config path: {self.config_path}
+            - STDOUT: {self.stdout}
+            - STDERR: {self.stderr}
+        """
+
+    def __getstate__(self):
+        attributes = self.__dict__.copy()
+        del attributes["process"]
+        return attributes
+
+    def start(self):
+        if self.process is not None:
+            raise RuntimeError(f"This http gw instance has already been started:\n{self}")
+        self.neofs_env.generate_wallet(WalletType.STORAGE, self.wallet, label=f"http")
+        logger.info(f"Generating config for http gw at {self.config_path}")
+        self._generate_config()
+        logger.info(f"Launching HTTP GW: {self}")
+        self._launch_process()
+
+    def _generate_config(self):
+        NeoFSEnv.generate_config_file(
+            config_template="http.yaml",
+            config_path=self.config_path,
+            address=self.address,
+            wallet=self.wallet,
+        )
+
+    def _launch_process(self):
+        stdout_fp = open(self.stdout, "w")
+        stderr_fp = open(self.stderr, "w")
+        http_gw_env = {}
+
+        for index, sn in enumerate(self.neofs_env.storage_nodes):
+            http_gw_env[f"HTTP_GW_PEERS_{index}_ADDRESS"] = sn.endpoint
+            http_gw_env[f"HTTP_GW_PEERS_{index}_WEIGHT"] = "0.2"
+
+        self.process = subprocess.Popen(
+            [self.neofs_env.neofs_http_gw_path, "--config", self.config_path],
+            stdout=stdout_fp,
+            stderr=stderr_fp,
+            env=http_gw_env,
         )
