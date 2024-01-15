@@ -7,6 +7,7 @@ from time import sleep
 import boto3
 import pexpect
 import pytest
+import requests
 from botocore.config import Config
 
 from neofs_testlib.env.env import NeoFSEnv, NodeWallet
@@ -138,3 +139,57 @@ def test_s3_gw_put_get(neofs_env: NeoFSEnv, s3_creds, wallet: NodeWallet):
     filekey = os.path.basename(filename)
     s3_client.put_object(**{"Body": file_content, "Bucket": bucket_name, "Key": filekey})
     s3_client.get_object(**{"Bucket": bucket_name, "Key": filekey})
+
+
+def test_http_gw_put_get(neofs_env: NeoFSEnv, wallet: NodeWallet, zero_fee):
+    cli = neofs_env.neofs_cli(neofs_env.generate_cli_config(wallet))
+
+    result = cli.container.create(
+        rpc_endpoint=neofs_env.sn_rpc,
+        wallet=wallet.path,
+        policy="REP 1 IN X CBF 1 SELECT 1 FROM * AS X",
+        basic_acl="0FBFBFFF",
+        await_mode=True,
+    )
+
+    lines = result.stdout.split("\n")
+    for line in lines:
+        if line.startswith("container ID:"):
+            cid = line.split(": ")[1]
+
+    result = cli.container.list(rpc_endpoint=neofs_env.sn_rpc, wallet=wallet.path)
+    containers = result.stdout.split()
+    assert cid in containers
+
+    filename = neofs_env._generate_temp_file()
+
+    with open(filename, "w") as file:
+        file.write("123456789")
+
+    request = f"http://{neofs_env.http_gw.address}/upload/{cid}"
+    files = {"upload_file": open(filename, "rb")}
+    body = {"filename": filename}
+    resp = requests.post(request, files=files, data=body)
+
+    if not resp.ok:
+        raise Exception(
+            f"""Failed to get object via HTTP gate:
+                request: {resp.request.path_url},
+                response: {resp.text},
+                status code: {resp.status_code} {resp.reason}"""
+        )
+
+    oid = resp.json().get("object_id")
+
+    download_attribute = "?download=true"
+    request = f"http://{neofs_env.http_gw.address}/get/{cid}/{oid}{download_attribute}"
+
+    resp = requests.get(request, stream=True)
+
+    if not resp.ok:
+        raise Exception(
+            f"""Failed to get object via HTTP gate:
+                request: {resp.request.path_url},
+                response: {resp.text},
+                status code: {resp.status_code} {resp.reason}"""
+        )
