@@ -109,11 +109,14 @@ class NeoFSEnv:
         self.inner_ring_nodes.append(new_inner_ring_node)
 
     @allure.step("Deploy storage node")
-    def deploy_storage_nodes(self, count=1):
+    def deploy_storage_nodes(self, count=1, attrs: Optional[dict] = None):
         logger.info(f"Going to deploy {count} storage nodes")
         deploy_threads = []
-        for _ in range(count):
-            new_storage_node = StorageNode(self)
+        for idx in range(count):
+            attrs_list = None
+            if attrs:
+                attrs_list = attrs.get(idx, None)
+            new_storage_node = StorageNode(self, attrs=attrs_list)
             self.storage_nodes.append(new_storage_node)
             deploy_threads.append(
                 threading.Thread(target=new_storage_node.start, args=(len(self.storage_nodes),))
@@ -198,7 +201,15 @@ class NeoFSEnv:
     def simple(cls) -> "NeoFSEnv":
         neofs_env = NeoFSEnv()
         neofs_env.deploy_inner_ring_node()
-        neofs_env.deploy_storage_nodes(count=4)
+        neofs_env.deploy_storage_nodes(
+            count=4, 
+            attrs={
+                0: ["UN-LOCODE:RU MOW", "Price:22"],
+                1: ["UN-LOCODE:RU LED", "Price:33"],
+                2: ["UN-LOCODE:SE STO", "Price:11"],
+                3: ["UN-LOCODE:FI HEL", "Price:44"]
+            }
+        )
         neofs_env.deploy_s3_gw()
         neofs_env.deploy_http_gw()
         return neofs_env
@@ -366,6 +377,7 @@ class StorageNode:
             Storage node:
             - Endpoint: {self.endpoint}
             - Control gRPC endpoint: {self.control_grpc_endpoint}
+            - Attributes: {self.attrs}
             - STDOUT: {self.stdout}
             - STDERR: {self.stderr}
         """
