@@ -60,3 +60,12 @@ push            = false
 [tool.bumpver.file_patterns]
 "pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
 "src/neofs_testlib/__init__.py" = ["{version}"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"neofs_testlib.env.templates" = ["*.yaml", "*.crt", "*.key"]
