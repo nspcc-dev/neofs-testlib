@@ -7,6 +7,7 @@ import socket
 import string
 import subprocess
 import threading
+import time
 from dataclasses import dataclass
 from enum import Enum
 from importlib.resources import files
@@ -109,17 +110,17 @@ class NeoFSEnv:
         self.inner_ring_nodes.append(new_inner_ring_node)
 
     @allure.step("Deploy storage node")
-    def deploy_storage_nodes(self, count=1, attrs: Optional[dict] = None):
+    def deploy_storage_nodes(self, count=1, node_attrs: Optional[dict] = None):
         logger.info(f"Going to deploy {count} storage nodes")
         deploy_threads = []
         for idx in range(count):
-            attrs_list = None
-            if attrs:
-                attrs_list = attrs.get(idx, None)
-            new_storage_node = StorageNode(self, attrs=attrs_list)
+            node_attrs_list = None
+            if node_attrs:
+                node_attrs_list = node_attrs.get(idx, None)
+            new_storage_node = StorageNode(self, len(self.storage_nodes) + 1, node_attrs=node_attrs_list)
             self.storage_nodes.append(new_storage_node)
             deploy_threads.append(
-                threading.Thread(target=new_storage_node.start, args=(len(self.storage_nodes),))
+                threading.Thread(target=new_storage_node.start)
             )
         for t in deploy_threads:
             t.start()
@@ -203,7 +204,7 @@ class NeoFSEnv:
         neofs_env.deploy_inner_ring_node()
         neofs_env.deploy_storage_nodes(
             count=4, 
-            attrs={
+            node_attrs={
                 0: ["UN-LOCODE:RU MOW", "Price:22"],
                 1: ["UN-LOCODE:RU LED", "Price:33"],
                 2: ["UN-LOCODE:SE STO", "Price:11"],
@@ -351,7 +352,13 @@ class Shard:
 
 
 class StorageNode:
-    def __init__(self, neofs_env: NeoFSEnv, attrs: Optional[list] = None):
+    def __init__(
+        self, 
+        neofs_env: NeoFSEnv, 
+        sn_number: int,
+        node_attrs: Optional[list] = None, 
+        attrs: Optional[dict] = None
+    ):
         self.neofs_env = neofs_env
         self.wallet = NodeWallet(
             path=NeoFSEnv._generate_temp_file(),
@@ -366,11 +373,13 @@ class StorageNode:
         self.control_grpc_endpoint = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
         self.stdout = NeoFSEnv._generate_temp_file()
         self.stderr = NeoFSEnv._generate_temp_file()
+        self.sn_number = sn_number
         self.process = None
+        self.attrs = {}
+        if node_attrs:
+            self.attrs.update({f"NEOFS_NODE_ATTRIBUTE_{index}": attr for index, attr in enumerate(node_attrs)})
         if attrs:
-            self.attrs = {f"NEOFS_NODE_ATTRIBUTE_{index}": attr for index, attr in enumerate(attrs)}
-        else:
-            self.attrs = {}
+            self.attrs.update(attrs)
 
     def __str__(self):
         return f"""
@@ -387,10 +396,44 @@ class StorageNode:
         del attributes["process"]
         return attributes
 
-    def start(self, sn_number):
-        logger.info(f"Generating wallet for storage node")
-        self.neofs_env.generate_wallet(WalletType.STORAGE, self.wallet, label=f"sn{sn_number}")
-        logger.info(f"Generating config for storage node at {self.storage_node_config_path}")
+    @allure.step("Start storage node")
+    def start(self, fresh=True):
+        if fresh:
+            logger.info(f"Generating wallet for storage node")
+            self.neofs_env.generate_wallet(WalletType.STORAGE, self.wallet, label=f"sn{self.sn_number}")
+            logger.info(f"Generating config for storage node at {self.storage_node_config_path}")
+            NeoFSEnv.generate_config_file(
+                config_template="sn.yaml",
+                config_path=self.storage_node_config_path,
+                morph_endpoint=self.neofs_env.morph_rpc,
+                shards=self.shards,
+                wallet=self.wallet,
+                state_file=self.state_file,
+            )
+            logger.info(f"Generating cli config for storage node at: {self.cli_config}")
+            NeoFSEnv.generate_config_file(
+                config_template="cli_cfg.yaml", config_path=self.cli_config, wallet=self.wallet
+            )
+        logger.info(f"Launching Storage Node:{self}")
+        self._launch_process()
+        logger.info(f"Wait until storage node is READY")
+        self._wait_until_ready()
+        
+    @allure.step("Stop storage node")
+    def stop(self):
+        self.process.terminate()
+        
+    @allure.step("Delete storage node data")
+    def delete_data(self):
+        self.stop()
+        for shard in self.shards:
+            os.remove(shard.metabase_path)
+            os.remove(shard.blobovnicza_path)
+            os.rmdir(shard.fstree_path)
+            os.remove(shard.pilorama_path)
+            os.remove(shard.wc_path)
+        os.remove(self.state_file)
+        self.shards = [Shard(), Shard()]
         NeoFSEnv.generate_config_file(
             config_template="sn.yaml",
             config_path=self.storage_node_config_path,
@@ -399,14 +442,30 @@ class StorageNode:
             wallet=self.wallet,
             state_file=self.state_file,
         )
-        logger.info(f"Generating cli config for storage node at: {self.cli_config}")
+        time.sleep(1)
+        
+    @allure.step("Delete storage node metadata")
+    def delete_metadata(self):
+        self.stop()
+        for shard in self.shards:
+            os.remove(shard.metabase_path)
+            shard.metabase_path = NeoFSEnv._generate_temp_file()
         NeoFSEnv.generate_config_file(
-            config_template="cli_cfg.yaml", config_path=self.cli_config, wallet=self.wallet
+            config_template="sn.yaml",
+            config_path=self.storage_node_config_path,
+            morph_endpoint=self.neofs_env.morph_rpc,
+            shards=self.shards,
+            wallet=self.wallet,
+            state_file=self.state_file,
         )
-        logger.info(f"Launching Storage Node:{self}")
-        self._launch_process()
-        logger.info(f"Wait until storage node is READY")
-        self._wait_until_ready()
+        time.sleep(1)
+        
+    @allure.step("Set metabase resync")
+    def set_metabase_resync(self, resync_state: bool):
+        self.stop()
+        for idx, _ in enumerate(self.shards):
+            self.attrs.update({f"NEOFS_STORAGE_SHARD_{idx}_RESYNC_METABASE": f"{resync_state}".lower()})
+        self.start(fresh=False)
 
     def _launch_process(self):
         stdout_fp = open(self.stdout, "w")

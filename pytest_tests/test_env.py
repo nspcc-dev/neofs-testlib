@@ -193,3 +193,23 @@ def test_http_gw_put_get(neofs_env: NeoFSEnv, wallet: NodeWallet, zero_fee):
                 response: {resp.text},
                 status code: {resp.status_code} {resp.reason}"""
         )
+
+
+def test_node_metabase_resync(neofs_env: NeoFSEnv, wallet: NodeWallet, zero_fee):
+    for node in neofs_env.storage_nodes:
+        node.set_metabase_resync(True)
+        node.set_metabase_resync(False)
+    test_http_gw_put_get(neofs_env, wallet, zero_fee)
+
+
+@pytest.mark.parametrize("data_type", ["meta", "all"])
+def test_node_delete_metadata_and_data(neofs_env: NeoFSEnv, wallet: NodeWallet, zero_fee, data_type: str):
+    for node in neofs_env.storage_nodes:
+        if data_type == "meta":
+            node.set_metabase_resync(True)
+            node.delete_metadata()
+        else:
+            node.delete_data()
+        node.start(fresh=False)
+    test_http_gw_put_get(neofs_env, wallet, zero_fee)
+    
