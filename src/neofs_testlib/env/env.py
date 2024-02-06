@@ -262,8 +262,8 @@ class InnerRing:
         self.p2p_address = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
         self.grpc_address = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
         self.ir_state_file = NeoFSEnv._generate_temp_file()
-        self.stdout = NeoFSEnv._generate_temp_file()
-        self.stderr = NeoFSEnv._generate_temp_file()
+        self.stdout = "Not initialized"
+        self.stderr = "Not initialized"
         self.process = None
 
     def __str__(self):
@@ -327,6 +327,8 @@ class InnerRing:
         self.neofs_env.neofs_adm
 
     def _launch_process(self):
+        self.stdout = NeoFSEnv._generate_temp_file()
+        self.stderr = NeoFSEnv._generate_temp_file()
         stdout_fp = open(self.stdout, "w")
         stderr_fp = open(self.stderr, "w")
         self.process = subprocess.Popen(
@@ -371,8 +373,8 @@ class StorageNode:
         self.shards = [Shard(), Shard()]
         self.endpoint = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
         self.control_grpc_endpoint = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
-        self.stdout = NeoFSEnv._generate_temp_file()
-        self.stderr = NeoFSEnv._generate_temp_file()
+        self.stdout = "Not initialized"
+        self.stderr = "Not initialized"
         self.sn_number = sn_number
         self.process = None
         self.attrs = {}
@@ -468,6 +470,8 @@ class StorageNode:
         self.start(fresh=False)
 
     def _launch_process(self):
+        self.stdout = NeoFSEnv._generate_temp_file()
+        self.stderr = NeoFSEnv._generate_temp_file()
         stdout_fp = open(self.stdout, "w")
         stderr_fp = open(self.stderr, "w")
         env_dict = {
@@ -505,8 +509,8 @@ class S3_GW:
         self.address = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
         self.tls_cert_path = NeoFSEnv._generate_temp_file()
         self.tls_key_path = NeoFSEnv._generate_temp_file()
-        self.stdout = NeoFSEnv._generate_temp_file()
-        self.stderr = NeoFSEnv._generate_temp_file()
+        self.stdout = "Not initialized"
+        self.stderr = "Not initialized"
         self.process = None
 
     def __str__(self):
@@ -551,6 +555,8 @@ class S3_GW:
         )
 
     def _launch_process(self):
+        self.stdout = NeoFSEnv._generate_temp_file()
+        self.stderr = NeoFSEnv._generate_temp_file()
         stdout_fp = open(self.stdout, "w")
         stderr_fp = open(self.stderr, "w")
         s3_gw_env = {
@@ -580,8 +586,8 @@ class HTTP_GW:
             password=self.neofs_env.default_password,
         )
         self.address = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
-        self.stdout = NeoFSEnv._generate_temp_file()
-        self.stderr = NeoFSEnv._generate_temp_file()
+        self.stdout = "Not initialized"
+        self.stderr = "Not initialized"
         self.process = None
 
     def __str__(self):
@@ -616,6 +622,8 @@ class HTTP_GW:
         )
 
     def _launch_process(self):
+        self.stdout = NeoFSEnv._generate_temp_file()
+        self.stderr = NeoFSEnv._generate_temp_file()
         stdout_fp = open(self.stdout, "w")
         stderr_fp = open(self.stderr, "w")
         http_gw_env = {}
