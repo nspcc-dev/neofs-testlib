@@ -27,3 +27,4 @@ storage:
   sn4: {{ default_password }}
   s3: {{ default_password }}
   http: {{ default_password }}
+  rest: {{ default_password }}

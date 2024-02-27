@@ -140,8 +140,8 @@ def test_s3_gw_put_get(neofs_env: NeoFSEnv, s3_creds, wallet: NodeWallet):
     s3_client.put_object(**{"Body": file_content, "Bucket": bucket_name, "Key": filekey})
     s3_client.get_object(**{"Bucket": bucket_name, "Key": filekey})
 
-
-def test_http_gw_put_get(neofs_env: NeoFSEnv, wallet: NodeWallet, zero_fee):
+@pytest.mark.parametrize("gw_type", ["HTTP", "REST"])
+def test_gateways_put_get(neofs_env: NeoFSEnv, wallet: NodeWallet, zero_fee, gw_type):
     cli = neofs_env.neofs_cli(neofs_env.generate_cli_config(wallet))
 
     result = cli.container.create(
@@ -166,14 +166,17 @@ def test_http_gw_put_get(neofs_env: NeoFSEnv, wallet: NodeWallet, zero_fee):
     with open(filename, "w") as file:
         file.write("123456789")
 
-    request = f"http://{neofs_env.http_gw.address}/upload/{cid}"
+    if gw_type == "HTTP":
+        request = f"http://{neofs_env.http_gw.address}/upload/{cid}"
+    else:
+        request = f"http://{neofs_env.rest_gw.address}/v1/upload/{cid}"
     files = {"upload_file": open(filename, "rb")}
     body = {"filename": filename}
     resp = requests.post(request, files=files, data=body)
 
     if not resp.ok:
         raise Exception(
-            f"""Failed to get object via HTTP gate:
+            f"""Failed to get object via {gw_type} gate:
                 request: {resp.request.path_url},
                 response: {resp.text},
                 status code: {resp.status_code} {resp.reason}"""
@@ -182,13 +185,16 @@ def test_http_gw_put_get(neofs_env: NeoFSEnv, wallet: NodeWallet, zero_fee):
     oid = resp.json().get("object_id")
 
     download_attribute = "?download=true"
-    request = f"http://{neofs_env.http_gw.address}/get/{cid}/{oid}{download_attribute}"
+    if gw_type == "HTTP":
+        request = f"http://{neofs_env.http_gw.address}/get/{cid}/{oid}{download_attribute}"
+    else:
+        request = f"http://{neofs_env.rest_gw.address}/v1/get/{cid}/{oid}{download_attribute}"
 
     resp = requests.get(request, stream=True)
 
     if not resp.ok:
         raise Exception(
-            f"""Failed to get object via HTTP gate:
+            f"""Failed to get object via {gw_type} gate:
                 request: {resp.request.path_url},
                 response: {resp.text},
                 status code: {resp.status_code} {resp.reason}"""

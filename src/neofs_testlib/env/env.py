@@ -138,6 +138,11 @@ class NeoFSEnv:
         self.http_gw = HTTP_GW(self)
         self.http_gw.start()
 
+    @allure.step("Deploy rest gateway")
+    def deploy_rest_gw(self):
+        self.rest_gw = REST_GW(self)
+        self.rest_gw.start()
+
     @allure.step("Generate wallet")
     def generate_wallet(
         self,
@@ -179,6 +184,7 @@ class NeoFSEnv:
 
     @allure.step("Kill current neofs env")
     def kill(self):
+        self.rest_gw.process.kill()
         self.http_gw.process.kill()
         self.s3_gw.process.kill()
         for sn in self.storage_nodes:
@@ -213,6 +219,7 @@ class NeoFSEnv:
         )
         neofs_env.deploy_s3_gw()
         neofs_env.deploy_http_gw()
+        neofs_env.deploy_rest_gw()
         return neofs_env
 
     @staticmethod
@@ -612,6 +619,7 @@ class HTTP_GW:
         self._generate_config()
         logger.info(f"Launching HTTP GW: {self}")
         self._launch_process()
+        logger.info(f"Launched HTTP GW: {self}")
 
     def _generate_config(self):
         NeoFSEnv.generate_config_file(
@@ -637,4 +645,75 @@ class HTTP_GW:
             stdout=stdout_fp,
             stderr=stderr_fp,
             env=http_gw_env,
+        )
+
+
+class REST_GW:
+    def __init__(self, neofs_env: NeoFSEnv):
+        self.neofs_env = neofs_env
+        self.config_path = NeoFSEnv._generate_temp_file(extension="yml")
+        self.wallet = NodeWallet(
+            path=NeoFSEnv._generate_temp_file(),
+            address="",
+            password=self.neofs_env.default_password,
+        )
+        self.address = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
+        self.pprof_address = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
+        self.metrics_address = f"{self.neofs_env.domain}:{NeoFSEnv.get_available_port()}"
+        self.stdout = "Not initialized"
+        self.stderr = "Not initialized"
+        self.process = None
+
+    def __str__(self):
+        return f"""
+            REST Gateway:
+            - Address: {self.address}
+            - Pprof address: {self.pprof_address}
+            - Metrics address: {self.metrics_address}
+            - REST GW Config path: {self.config_path}
+            - STDOUT: {self.stdout}
+            - STDERR: {self.stderr}
+        """
+
+    def __getstate__(self):
+        attributes = self.__dict__.copy()
+        del attributes["process"]
+        return attributes
+
+    def start(self):
+        if self.process is not None:
+            raise RuntimeError(f"This rest gw instance has already been started:\n{self}")
+        self.neofs_env.generate_wallet(WalletType.STORAGE, self.wallet, label=f"rest")
+        logger.info(f"Generating config for rest gw at {self.config_path}")
+        self._generate_config()
+        logger.info(f"Launching REST GW: {self}")
+        self._launch_process()
+        logger.info(f"Launched REST GW: {self}")
+
+    def _generate_config(self):
+        NeoFSEnv.generate_config_file(
+            config_template="rest.yaml",
+            config_path=self.config_path,
+            address=self.address,
+            wallet=self.wallet,
+            pprof_address=self.pprof_address,
+            metrics_address=self.metrics_address,
+        )
+
+    def _launch_process(self):
+        self.stdout = NeoFSEnv._generate_temp_file()
+        self.stderr = NeoFSEnv._generate_temp_file()
+        stdout_fp = open(self.stdout, "w")
+        stderr_fp = open(self.stderr, "w")
+        rest_gw_env = {}
+
+        for index, sn in enumerate(self.neofs_env.storage_nodes):
+            rest_gw_env[f"REST_GW_POOL_PEERS_{index}_ADDRESS"] = sn.endpoint
+            rest_gw_env[f"REST_GW_POOL_PEERS_{index}_WEIGHT"] = "0.2"
+
+        self.process = subprocess.Popen(
+            [self.neofs_env.neofs_rest_gw_path, "--config", self.config_path],
+            stdout=stdout_fp,
+            stderr=stderr_fp,
+            env=rest_gw_env,
         )
