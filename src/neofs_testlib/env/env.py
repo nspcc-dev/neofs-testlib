@@ -619,6 +619,7 @@ class HTTP_GW:
         self._generate_config()
         logger.info(f"Launching HTTP GW: {self}")
         self._launch_process()
+        logger.info(f"Launched HTTP GW: {self}")
 
     def _generate_config(self):
         NeoFSEnv.generate_config_file(
@@ -687,6 +688,7 @@ class REST_GW:
         self._generate_config()
         logger.info(f"Launching REST GW: {self}")
         self._launch_process()
+        logger.info(f"Launched REST GW: {self}")
 
     def _generate_config(self):
         NeoFSEnv.generate_config_file(
