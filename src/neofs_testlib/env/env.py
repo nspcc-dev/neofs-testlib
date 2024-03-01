@@ -4,6 +4,7 @@ import os
 import pickle
 import random
 import socket
+import stat
 import string
 import subprocess
 import threading
@@ -16,6 +17,8 @@ from typing import Optional
 
 import allure
 import jinja2
+import requests
+import yaml
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from neofs_testlib.cli import NeofsAdm, NeofsCli
@@ -38,11 +41,12 @@ class WalletType(Enum):
 
 
 class NeoFSEnv:
-    def __init__(self):
+    def __init__(self, neofs_env_config: dict = None):
         self.domain = "localhost"
         self.default_password = "password"
         self.shell = LocalShell()
         # utilities
+        self.neofs_env_config = neofs_env_config
         self.neofs_adm_path = os.getenv("NEOFS_ADM_BIN", "./neofs-adm")
         self.neofs_cli_path = os.getenv("NEOFS_CLI_BIN", "./neofs-cli")
         self.neo_go_path = os.getenv("NEO_GO_BIN", "./neo-go")
@@ -199,14 +203,62 @@ class NeoFSEnv:
         logger.info(f"Persist env at: {persisted_path}")
         return persisted_path
 
+    @allure.step("Download binaries")
+    def download_binaries(self):
+        logger.info(f"Going to download missing binaries, if any")
+        deploy_threads = []
+
+        binaries = [
+            (self.neofs_adm_path, "neofs_adm"),
+            (self.neofs_cli_path, "neofs_cli"),
+            (self.neo_go_path, "neo_go"),
+            (self.neofs_ir_path, "neofs_ir"),
+            (self.neofs_node_path, "neofs_node"),
+            (self.neofs_s3_authmate_path, "neofs_s3_authmate"),
+            (self.neofs_s3_gw_path, "neofs_s3_gw"),
+            (self.neofs_rest_gw_path, "neofs_rest_gw"),
+            (self.neofs_http_gw_path, "neofs_http_gw"),
+        ]
+
+        for binary in binaries:
+            binary_path, binary_name = binary
+            if not os.path.isfile(binary_path):
+                logger.info(f"Will download {binary_name}")
+                neofs_binary_params = self.neofs_env_config["binaries"][binary_name]
+                deploy_threads.append(
+                    threading.Thread(
+                        target=NeoFSEnv.download_binary,
+                        args=(
+                            neofs_binary_params["repo"],
+                            neofs_binary_params["version"],
+                            neofs_binary_params["file"],
+                            binary_path,
+                        ),
+                    )
+                )
+            else:
+                logger.info(f"'{binary_name}' already exists, will not be downloaded")
+
+        if len(deploy_threads) > 0:
+            for t in deploy_threads:
+                t.start()
+            logger.info(f"Wait until all binaries are downloaded")
+            for t in deploy_threads:
+                t.join()
+
     @classmethod
     def load(cls, persisted_path: str) -> "NeoFSEnv":
         with open(persisted_path, "rb") as fp:
             return pickle.load(fp)
 
     @classmethod
-    def simple(cls) -> "NeoFSEnv":
-        neofs_env = NeoFSEnv()
+    def simple(cls, neofs_env_config: dict = None) -> "NeoFSEnv":
+        if not neofs_env_config:
+            neofs_env_config = yaml.safe_load(
+                files("neofs_testlib.env.templates").joinpath("neofs_env_config.yaml").read_text()
+            )
+        neofs_env = NeoFSEnv(neofs_env_config=neofs_env_config)
+        neofs_env.download_binaries()
         neofs_env.deploy_inner_ring_node()
         neofs_env.deploy_storage_nodes(
             count=4, 
@@ -238,6 +290,20 @@ class NeoFSEnv:
         addr = s.getsockname()
         s.close()
         return addr[1]
+
+    @staticmethod
+    def download_binary(repo: str, version: str, file: str, target: str):
+        download_url = f"https://github.com/{repo}/releases/download/{version}/{file}"
+        resp = requests.get(download_url)
+        if not resp.ok:
+            raise AssertionError(
+                f"Can not download binary from url: {download_url}: {resp.status_code}/{resp.reason}/{resp.json()}"
+            )
+        with open(target, mode="wb") as binary_file:
+            binary_file.write(resp.content)
+        # make binary executable
+        current_perm = os.stat(target)
+        os.chmod(target, current_perm.st_mode | stat.S_IEXEC)
 
     @staticmethod
     def _generate_temp_file(extension: str = "") -> str:
