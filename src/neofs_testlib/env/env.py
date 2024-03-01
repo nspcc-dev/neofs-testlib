@@ -4,6 +4,7 @@ import os
 import pickle
 import random
 import socket
+import stat
 import string
 import subprocess
 import threading
@@ -16,6 +17,8 @@ from typing import Optional
 
 import allure
 import jinja2
+import requests
+import yaml
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from neofs_testlib.cli import NeofsAdm, NeofsCli
@@ -38,11 +41,12 @@ class WalletType(Enum):
 
 
 class NeoFSEnv:
-    def __init__(self):
+    def __init__(self, neofs_env_config: dict = None):
         self.domain = "localhost"
         self.default_password = "password"
         self.shell = LocalShell()
         # utilities
+        self.neofs_env_config = neofs_env_config
         self.neofs_adm_path = os.getenv("NEOFS_ADM_BIN", "./neofs-adm")
         self.neofs_cli_path = os.getenv("NEOFS_CLI_BIN", "./neofs-cli")
         self.neo_go_path = os.getenv("NEO_GO_BIN", "./neo-go")
@@ -199,14 +203,62 @@ class NeoFSEnv:
         logger.info(f"Persist env at: {persisted_path}")
         return persisted_path
 
+    @allure.step("Download binaries")
+    def download_binaries(self):
+        logger.info(f"Going to download missing binaries, if any")
+        deploy_threads = []
+
+        binaries = [
+            (self.neofs_adm_path, "neofs_adm"),
+            (self.neofs_cli_path, "neofs_cli"),
+            (self.neo_go_path, "neo_go"),
+            (self.neofs_ir_path, "neofs_ir"),
+            (self.neofs_node_path, "neofs_node"),
+            (self.neofs_s3_authmate_path, "neofs_s3_authmate"),
+            (self.neofs_s3_gw_path, "neofs_s3_gw"),
+            (self.neofs_rest_gw_path, "neofs_rest_gw"),
+            (self.neofs_http_gw_path, "neofs_http_gw"),
+        ]
+
+        for binary in binaries:
+            binary_path, binary_name = binary
+            if not os.path.isfile(binary_path):
+                logger.info(f"Will download {binary_name}")
+                neofs_binary_params = self.neofs_env_config["binaries"][binary_name]
+                deploy_threads.append(
+                    threading.Thread(
+                        target=NeoFSEnv.download_binary,
+                        args=(
+                            neofs_binary_params["repo"],
+                            neofs_binary_params["version"],
+                            neofs_binary_params["file"],
+                            binary_path,
+                        ),
+                    )
+                )
+            else:
+                logger.info(f"'{binary_name}' already exists, will not be downloaded")
+
+        if len(deploy_threads) > 0:
+            for t in deploy_threads:
+                t.start()
+            logger.info(f"Wait until all binaries are downloaded")
+            for t in deploy_threads:
+                t.join()
+
     @classmethod
     def load(cls, persisted_path: str) -> "NeoFSEnv":
         with open(persisted_path, "rb") as fp:
             return pickle.load(fp)
 
     @classmethod
-    def simple(cls) -> "NeoFSEnv":
-        neofs_env = NeoFSEnv()
+    def simple(cls, neofs_env_config: dict = None) -> "NeoFSEnv":
+        if not neofs_env_config:
+            neofs_env_config = yaml.safe_load(
+                files("neofs_testlib.env.templates").joinpath("neofs_env_config.yaml").read_text()
+            )
+        neofs_env = NeoFSEnv(neofs_env_config=neofs_env_config)
+        neofs_env.download_binaries()
         neofs_env.deploy_inner_ring_node()
         neofs_env.deploy_storage_nodes(
             count=4, 
@@ -223,9 +275,14 @@ class NeoFSEnv:
         return neofs_env
 
     @staticmethod
-    def generate_config_file(config_template: str, config_path: str, **kwargs):
+    def generate_config_file(config_template: str, config_path: str, custom=False, **kwargs):
         jinja_env = jinja2.Environment()
-        config_template = files("neofs_testlib.env.templates").joinpath(config_template).read_text()
+        if custom:
+            config_template = Path(config_template).read_text()
+        else:
+            config_template = (
+                files("neofs_testlib.env.templates").joinpath(config_template).read_text()
+            )
         jinja_template = jinja_env.from_string(config_template)
         rendered_config = jinja_template.render(**kwargs)
         with open(config_path, mode="w") as fp:
@@ -238,6 +295,20 @@ class NeoFSEnv:
         addr = s.getsockname()
         s.close()
         return addr[1]
+
+    @staticmethod
+    def download_binary(repo: str, version: str, file: str, target: str):
+        download_url = f"https://github.com/{repo}/releases/download/{version}/{file}"
+        resp = requests.get(download_url)
+        if not resp.ok:
+            raise AssertionError(
+                f"Can not download binary from url: {download_url}: {resp.status_code}/{resp.reason}/{resp.json()}"
+            )
+        with open(target, mode="wb") as binary_file:
+            binary_file.write(resp.content)
+        # make binary executable
+        current_perm = os.stat(target)
+        os.chmod(target, current_perm.st_mode | stat.S_IEXEC)
 
     @staticmethod
     def _generate_temp_file(extension: str = "") -> str:
@@ -296,8 +367,15 @@ class InnerRing:
         if self.process is not None:
             raise RuntimeError(f"This inner ring node instance has already been started")
         logger.info(f"Generating network config at: {self.network_config}")
+
+        network_config_template = "network.yaml"
+        if self.neofs_env.neofs_env_config["configs_templates"]["network"] != "default":
+            network_config_template = self.neofs_env.neofs_env_config["configs_templates"][
+                "network"
+            ]
+
         NeoFSEnv.generate_config_file(
-            config_template="network.yaml",
+            config_template=network_config_template,
             config_path=self.network_config,
             morph_endpoint=self.rpc_address,
             alphabet_wallets_path=self.alphabet_wallet.path,
@@ -308,8 +386,13 @@ class InnerRing:
             WalletType.ALPHABET, self.alphabet_wallet, network_config=self.network_config
         )
         logger.info(f"Generating IR config at: {self.ir_node_config_path}")
+
+        ir_config_template = "ir.yaml"
+        if self.neofs_env.neofs_env_config["configs_templates"]["ir"] != "default":
+            ir_config_template = self.neofs_env.neofs_env_config["configs_templates"]["ir"]
+
         NeoFSEnv.generate_config_file(
-            config_template="ir.yaml",
+            config_template=ir_config_template,
             config_path=self.ir_node_config_path,
             wallet=self.alphabet_wallet,
             public_key=wallet_utils.get_last_public_key_from_wallet(
@@ -411,8 +494,13 @@ class StorageNode:
             logger.info(f"Generating wallet for storage node")
             self.neofs_env.generate_wallet(WalletType.STORAGE, self.wallet, label=f"sn{self.sn_number}")
             logger.info(f"Generating config for storage node at {self.storage_node_config_path}")
+
+            sn_config_template = "sn.yaml"
+            if self.neofs_env.neofs_env_config["configs_templates"]["sn"] != "default":
+                sn_config_template = self.neofs_env.neofs_env_config["configs_templates"]["sn"]
+
             NeoFSEnv.generate_config_file(
-                config_template="sn.yaml",
+                config_template=sn_config_template,
                 config_path=self.storage_node_config_path,
                 morph_endpoint=self.neofs_env.morph_rpc,
                 shards=self.shards,
@@ -443,8 +531,13 @@ class StorageNode:
             os.remove(shard.wc_path)
         os.remove(self.state_file)
         self.shards = [Shard(), Shard()]
+
+        sn_config_template = "sn.yaml"
+        if self.neofs_env.neofs_env_config["configs_templates"]["sn"] != "default":
+            sn_config_template = self.neofs_env.neofs_env_config["configs_templates"]["sn"]
+
         NeoFSEnv.generate_config_file(
-            config_template="sn.yaml",
+            config_template=sn_config_template,
             config_path=self.storage_node_config_path,
             morph_endpoint=self.neofs_env.morph_rpc,
             shards=self.shards,
@@ -459,8 +552,13 @@ class StorageNode:
         for shard in self.shards:
             os.remove(shard.metabase_path)
             shard.metabase_path = NeoFSEnv._generate_temp_file()
+
+        sn_config_template = "sn.yaml"
+        if self.neofs_env.neofs_env_config["configs_templates"]["sn"] != "default":
+            sn_config_template = self.neofs_env.neofs_env_config["configs_templates"]["sn"]
+
         NeoFSEnv.generate_config_file(
-            config_template="sn.yaml",
+            config_template=sn_config_template,
             config_path=self.storage_node_config_path,
             morph_endpoint=self.neofs_env.morph_rpc,
             shards=self.shards,
@@ -551,8 +649,12 @@ class S3_GW:
         with open(self.tls_key_path, mode="w") as fp:
             fp.write(tls_key_template)
 
+        s3_config_template = "s3.yaml"
+        if self.neofs_env.neofs_env_config["configs_templates"]["s3"] != "default":
+            s3_config_template = self.neofs_env.neofs_env_config["configs_templates"]["s3"]
+
         NeoFSEnv.generate_config_file(
-            config_template="s3.yaml",
+            config_template=s3_config_template,
             config_path=self.config_path,
             address=self.address,
             cert_file_path=self.tls_cert_path,
@@ -622,8 +724,12 @@ class HTTP_GW:
         logger.info(f"Launched HTTP GW: {self}")
 
     def _generate_config(self):
+        http_config_template = "http.yaml"
+        if self.neofs_env.neofs_env_config["configs_templates"]["http"] != "default":
+            http_config_template = self.neofs_env.neofs_env_config["configs_templates"]["http"]
+
         NeoFSEnv.generate_config_file(
-            config_template="http.yaml",
+            config_template=http_config_template,
             config_path=self.config_path,
             address=self.address,
             wallet=self.wallet,
@@ -691,8 +797,12 @@ class REST_GW:
         logger.info(f"Launched REST GW: {self}")
 
     def _generate_config(self):
+        rest_config_template = "rest.yaml"
+        if self.neofs_env.neofs_env_config["configs_templates"]["rest"] != "default":
+            rest_config_template = self.neofs_env.neofs_env_config["configs_templates"]["rest"]
+
         NeoFSEnv.generate_config_file(
-            config_template="rest.yaml",
+            config_template=rest_config_template,
             config_path=self.config_path,
             address=self.address,
             wallet=self.wallet,
