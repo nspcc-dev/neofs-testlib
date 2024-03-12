@@ -41,6 +41,8 @@ class WalletType(Enum):
 
 
 class NeoFSEnv:
+    _busy_ports = []
+
     def __init__(self, neofs_env_config: dict = None):
         self.domain = "localhost"
         self.default_password = "password"
@@ -288,13 +290,17 @@ class NeoFSEnv:
         with open(config_path, mode="w") as fp:
             fp.write(rendered_config)
 
-    @staticmethod
-    def get_available_port() -> str:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(("", 0))
-        addr = s.getsockname()
-        s.close()
-        return addr[1]
+    @classmethod
+    def get_available_port(cls) -> str:
+        for _ in range(len(cls._busy_ports) + 2):
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.bind(("", 0))
+            addr = s.getsockname()
+            s.close()
+            if addr[1] not in cls._busy_ports:
+                cls._busy_ports.append(addr[1])
+                return addr[1]
+        raise AssertionError("Can not find an available port")
 
     @staticmethod
     def download_binary(repo: str, version: str, file: str, target: str):
