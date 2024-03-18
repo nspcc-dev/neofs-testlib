@@ -204,6 +204,22 @@ class NeoFSEnv:
             pickle.dump(self, fp)
         logger.info(f"Persist env at: {persisted_path}")
         return persisted_path
+    
+    def log_env_details_to_file(self):
+        with open("env_details", "w") as fp:
+            env_details = ""
+            
+            for ir_node in self.inner_ring_nodes:
+                env_details += f"{ir_node}\n"
+                
+            for sn_node in self.storage_nodes:
+                env_details += f"{sn_node}\n"
+                
+            env_details += f"{self.s3_gw}\n"
+            env_details += f"{self.rest_gw}\n"
+            env_details += f"{self.http_gw}\n"
+            
+            fp.write(env_details)
 
     @allure.step("Download binaries")
     def download_binaries(self):
@@ -274,6 +290,7 @@ class NeoFSEnv:
         neofs_env.deploy_s3_gw()
         neofs_env.deploy_http_gw()
         neofs_env.deploy_rest_gw()
+        neofs_env.log_env_details_to_file()
         return neofs_env
 
     @staticmethod
