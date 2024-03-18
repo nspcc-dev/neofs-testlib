@@ -48,11 +48,3 @@ binaries:
         repo: 'nspcc-dev/neo-go'
         version: 'v0.104.0'
         file: 'neo-go-linux-amd64'
-
-configs_templates:
-    network: 'default'
-    ir: 'default'
-    sn: 'default'
-    http: 'default'
-    rest: 'default'
-    s3: 'default'

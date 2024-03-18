@@ -427,14 +427,11 @@ class InnerRing:
         logger.info(f"Generating network config at: {self.network_config}")
 
         network_config_template = "network.yaml"
-        if self.neofs_env.neofs_env_config["configs_templates"]["network"] != "default":
-            network_config_template = self.neofs_env.neofs_env_config["configs_templates"][
-                "network"
-            ]
 
         NeoFSEnv.generate_config_file(
             config_template=network_config_template,
             config_path=self.network_config,
+            custom=Path(network_config_template).is_file(),
             morph_endpoint=self.rpc_address,
             alphabet_wallets_path=self.alphabet_wallet.path,
             default_password=self.neofs_env.default_password,
@@ -446,12 +443,11 @@ class InnerRing:
         logger.info(f"Generating IR config at: {self.ir_node_config_path}")
 
         ir_config_template = "ir.yaml"
-        if self.neofs_env.neofs_env_config["configs_templates"]["ir"] != "default":
-            ir_config_template = self.neofs_env.neofs_env_config["configs_templates"]["ir"]
 
         NeoFSEnv.generate_config_file(
             config_template=ir_config_template,
             config_path=self.ir_node_config_path,
+            custom=Path(ir_config_template).is_file(),
             wallet=self.alphabet_wallet,
             public_key=wallet_utils.get_last_public_key_from_wallet(
                 self.alphabet_wallet.path, self.alphabet_wallet.password
@@ -554,12 +550,11 @@ class StorageNode:
             logger.info(f"Generating config for storage node at {self.storage_node_config_path}")
 
             sn_config_template = "sn.yaml"
-            if self.neofs_env.neofs_env_config["configs_templates"]["sn"] != "default":
-                sn_config_template = self.neofs_env.neofs_env_config["configs_templates"]["sn"]
 
             NeoFSEnv.generate_config_file(
                 config_template=sn_config_template,
                 config_path=self.storage_node_config_path,
+                custom=Path(sn_config_template).is_file(),
                 morph_endpoint=self.neofs_env.morph_rpc,
                 shards=self.shards,
                 wallet=self.wallet,
@@ -592,12 +587,11 @@ class StorageNode:
         self.shards = [Shard(), Shard()]
 
         sn_config_template = "sn.yaml"
-        if self.neofs_env.neofs_env_config["configs_templates"]["sn"] != "default":
-            sn_config_template = self.neofs_env.neofs_env_config["configs_templates"]["sn"]
 
         NeoFSEnv.generate_config_file(
             config_template=sn_config_template,
             config_path=self.storage_node_config_path,
+            custom=Path(sn_config_template).is_file(),
             morph_endpoint=self.neofs_env.morph_rpc,
             shards=self.shards,
             wallet=self.wallet,
@@ -613,12 +607,11 @@ class StorageNode:
             shard.metabase_path = NeoFSEnv._generate_temp_file(prefix=f"shard_metabase")
 
         sn_config_template = "sn.yaml"
-        if self.neofs_env.neofs_env_config["configs_templates"]["sn"] != "default":
-            sn_config_template = self.neofs_env.neofs_env_config["configs_templates"]["sn"]
 
         NeoFSEnv.generate_config_file(
             config_template=sn_config_template,
             config_path=self.storage_node_config_path,
+            custom=Path(sn_config_template).is_file(),
             morph_endpoint=self.neofs_env.morph_rpc,
             shards=self.shards,
             wallet=self.wallet,
@@ -709,12 +702,11 @@ class S3_GW:
             fp.write(tls_key_template)
 
         s3_config_template = "s3.yaml"
-        if self.neofs_env.neofs_env_config["configs_templates"]["s3"] != "default":
-            s3_config_template = self.neofs_env.neofs_env_config["configs_templates"]["s3"]
 
         NeoFSEnv.generate_config_file(
             config_template=s3_config_template,
             config_path=self.config_path,
+            custom=Path(s3_config_template).is_file(),
             address=self.address,
             cert_file_path=self.tls_cert_path,
             key_file_path=self.tls_key_path,
@@ -784,12 +776,11 @@ class HTTP_GW:
 
     def _generate_config(self):
         http_config_template = "http.yaml"
-        if self.neofs_env.neofs_env_config["configs_templates"]["http"] != "default":
-            http_config_template = self.neofs_env.neofs_env_config["configs_templates"]["http"]
 
         NeoFSEnv.generate_config_file(
             config_template=http_config_template,
             config_path=self.config_path,
+            custom=Path(http_config_template).is_file(),
             address=self.address,
             wallet=self.wallet,
         )
@@ -857,12 +848,11 @@ class REST_GW:
 
     def _generate_config(self):
         rest_config_template = "rest.yaml"
-        if self.neofs_env.neofs_env_config["configs_templates"]["rest"] != "default":
-            rest_config_template = self.neofs_env.neofs_env_config["configs_templates"]["rest"]
 
         NeoFSEnv.generate_config_file(
             config_template=rest_config_template,
             config_path=self.config_path,
+            custom=Path(rest_config_template).is_file(),
             address=self.address,
             wallet=self.wallet,
             pprof_address=self.pprof_address,
