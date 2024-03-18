@@ -223,6 +223,19 @@ class NeoFSEnv:
             env_details += f"{self.http_gw}\n"
             
             fp.write(env_details)
+            
+    def log_versions_to_allure(self):
+        versions = ""
+        versions += NeoFSEnv._run_single_command(self.neofs_adm_path, "--version")
+        versions += NeoFSEnv._run_single_command(self.neofs_cli_path, "--version")
+        versions += NeoFSEnv._run_single_command(self.neo_go_path, "--version")
+        versions += NeoFSEnv._run_single_command(self.neofs_ir_path, "--version")
+        versions += NeoFSEnv._run_single_command(self.neofs_node_path, "--version")
+        versions += NeoFSEnv._run_single_command(self.neofs_s3_authmate_path, "--version")
+        versions += NeoFSEnv._run_single_command(self.neofs_s3_gw_path, "--version")
+        versions += NeoFSEnv._run_single_command(self.neofs_rest_gw_path, "--version")
+        versions += NeoFSEnv._run_single_command(self.neofs_http_gw_path, "--version")
+        allure.attach(versions, f"neofs env versions", allure.attachment_type.TEXT, ".txt")
 
     @allure.step("Download binaries")
     def download_binaries(self):
@@ -277,6 +290,7 @@ class NeoFSEnv:
             return pickle.load(fp)
 
     @classmethod
+    @allure.step("Deploy simple neofs env")
     def simple(cls, neofs_env_config: dict = None) -> "NeoFSEnv":
         if not neofs_env_config:
             neofs_env_config = yaml.safe_load(
@@ -298,6 +312,7 @@ class NeoFSEnv:
         neofs_env.deploy_http_gw()
         neofs_env.deploy_rest_gw()
         neofs_env.log_env_details_to_file()
+        neofs_env.log_versions_to_allure()
         return neofs_env
 
     @staticmethod
@@ -313,6 +328,15 @@ class NeoFSEnv:
         rendered_config = jinja_template.render(**kwargs)
         with open(config_path, mode="w") as fp:
             fp.write(rendered_config)
+      
+    @staticmethod      
+    def _run_single_command(binary: str, command: str) -> str:
+        result = subprocess.run(
+            [binary, command],
+            capture_output = True,
+            text = True
+        )
+        return f"{result.stdout}\n{result.stderr}\n"
 
     @classmethod
     def get_available_port(cls) -> str:
