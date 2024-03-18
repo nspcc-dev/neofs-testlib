@@ -138,16 +138,19 @@ class NeoFSEnv:
     def deploy_s3_gw(self):
         self.s3_gw = S3_GW(self)
         self.s3_gw.start()
+        allure.attach(str(self.s3_gw), "s3_gw", allure.attachment_type.TEXT, ".txt")
 
     @allure.step("Deploy http gateway")
     def deploy_http_gw(self):
         self.http_gw = HTTP_GW(self)
         self.http_gw.start()
+        allure.attach(str(self.http_gw), "http_gw", allure.attachment_type.TEXT, ".txt")
 
     @allure.step("Deploy rest gateway")
     def deploy_rest_gw(self):
         self.rest_gw = REST_GW(self)
         self.rest_gw.start()
+        allure.attach(str(self.rest_gw), "http_gw", allure.attachment_type.TEXT, ".txt")
 
     @allure.step("Generate wallet")
     def generate_wallet(
@@ -241,19 +244,23 @@ class NeoFSEnv:
         for binary in binaries:
             binary_path, binary_name = binary
             if not os.path.isfile(binary_path):
-                logger.info(f"Will download {binary_name}")
-                neofs_binary_params = self.neofs_env_config["binaries"][binary_name]
-                deploy_threads.append(
-                    threading.Thread(
-                        target=NeoFSEnv.download_binary,
-                        args=(
-                            neofs_binary_params["repo"],
-                            neofs_binary_params["version"],
-                            neofs_binary_params["file"],
-                            binary_path,
-                        ),
+                allure_step_name = "Downloading "
+                allure_step_name += f" {neofs_binary_params['repo']}/"
+                allure_step_name += f"{neofs_binary_params['version']}/"
+                allure_step_name += f"{neofs_binary_params['file']}"
+                with allure.step(allure_step_name):
+                    neofs_binary_params = self.neofs_env_config["binaries"][binary_name]
+                    deploy_threads.append(
+                        threading.Thread(
+                            target=NeoFSEnv.download_binary,
+                            args=(
+                                neofs_binary_params["repo"],
+                                neofs_binary_params["version"],
+                                neofs_binary_params["file"],
+                                binary_path,
+                            ),
+                        )
                     )
-                )
             else:
                 logger.info(f"'{binary_name}' already exists, will not be downloaded")
 
@@ -542,6 +549,7 @@ class StorageNode:
         self._launch_process()
         logger.info(f"Wait until storage node is READY")
         self._wait_until_ready()
+        allure.attach(str(self), f"sn_{self.sn_number}", allure.attachment_type.TEXT, ".txt")
         
     @allure.step("Stop storage node")
     def stop(self):
