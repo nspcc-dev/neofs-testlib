@@ -166,7 +166,7 @@ class NeoFSEnv:
             neofs_adm.morph.generate_storage_wallet(
                 alphabet_wallets=self.alphabet_wallets_dir,
                 storage_wallet=prepared_wallet.path,
-                initial_gas="10",
+                initial_gas="1000",
                 label=label,
             )
         elif wallet_type == WalletType.ALPHABET:
