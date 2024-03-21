@@ -257,12 +257,12 @@ class NeoFSEnv:
         for binary in binaries:
             binary_path, binary_name = binary
             if not os.path.isfile(binary_path):
+                neofs_binary_params = self.neofs_env_config["binaries"][binary_name]
                 allure_step_name = "Downloading "
                 allure_step_name += f" {neofs_binary_params['repo']}/"
                 allure_step_name += f"{neofs_binary_params['version']}/"
                 allure_step_name += f"{neofs_binary_params['file']}"
                 with allure.step(allure_step_name):
-                    neofs_binary_params = self.neofs_env_config["binaries"][binary_name]
                     deploy_threads.append(
                         threading.Thread(
                             target=NeoFSEnv.download_binary,
