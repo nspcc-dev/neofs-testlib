@@ -131,9 +131,25 @@ class NeoFSEnv:
         for t in deploy_threads:
             t.start()
         logger.info(f"Wait until storage nodes are deployed")
+        self._wait_until_all_storage_nodes_are_ready()
+        # tick epoch to speed up storage nodes bootstrap
+        self.neofs_adm().morph.force_new_epoch(
+            rpc_endpoint=f"http://{self.morph_rpc}",
+            alphabet_wallets=self.alphabet_wallets_dir,
+        )
         for t in deploy_threads:
             t.join()
-
+            
+    @retry(wait=wait_fixed(2), stop=stop_after_attempt(60), reraise=True)
+    def _wait_until_all_storage_nodes_are_ready(self):
+        ready_counter = 0
+        for sn in self.storage_nodes:
+            neofs_cli = self.neofs_cli(sn.cli_config)
+            result = neofs_cli.control.healthcheck(endpoint=sn.control_grpc_endpoint)
+            if "Health status: READY" in result.stdout:
+                ready_counter += 1
+        assert ready_counter == len(self.storage_nodes)
+            
     @allure.step("Deploy s3 gateway")
     def deploy_s3_gw(self):
         self.s3_gw = S3_GW(self)
