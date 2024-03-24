@@ -12,7 +12,7 @@ pytest
 boto3
 
 # Dev dependencies
-black==22.8.0
+black==24.3.0
 bumpver==2022.1118
 isort==5.12.0
 pre-commit==2.20.0
