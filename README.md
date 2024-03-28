@@ -1,6 +1,12 @@
 # neofs-testlib
 This library provides building blocks and utilities to facilitate development of automated tests for NeoFS system.
 
+**This repository is archived and no longer maintained.**
+
+All of the code had been moved to [neofs-testcases](https://github.com/nspcc-dev/neofs-testcases/)
+(see [the issue that triggered](https://github.com/nspcc-dev/neofs-testcases/issues/742) this as well)
+and now it's maintained there.
+
 ## Installation
 Library can be installed via pip:
 ```shell
